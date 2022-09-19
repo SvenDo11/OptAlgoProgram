@@ -25,6 +25,7 @@ public:
     ~RectangleInstance();
 
     void add_rectangle(int id, int width, int heigth);
+    int getBoxlength();
 
     friend std::ostream& operator<<(std::ostream& os, RectangleInstance *rec);
 private:

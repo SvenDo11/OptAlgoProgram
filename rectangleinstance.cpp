@@ -22,6 +22,11 @@ void RectangleInstance::add_rectangle(int id, int width, int heigth)
     replace(id, newElem);
 }
 
+int RectangleInstance::getBoxlength()
+{
+    return boxLength;
+}
+
 std::ostream& operator<<(std::ostream& os, RectangleInstance *rec)
 {
     os << "size: " << rec->size() << "; ";

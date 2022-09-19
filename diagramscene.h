@@ -53,8 +53,14 @@
 
 #include "diagramitem.h"
 #include "diagramtextitem.h"
+#include "rectangleinstance.h"
+#include "rectsolution.h"
 
 #include <QGraphicsScene>
+#include <QGraphicsRectItem>
+
+#define SCALE 20
+#define LINES 5
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -85,9 +91,14 @@ public:
     void setFont(const QFont &font);
 
 public slots:
-    void setMode(Mode mode);
+    void setMode(DiagramScene::Mode mode);
     void setItemType(DiagramItem::DiagramType type);
     void editorLostFocus(DiagramTextItem *item);
+
+    void initRectangles(RectangleInstance *instance);
+    void updateRectangles(RectSolution sol);
+
+    void cleanUp();
 
 signals:
     void itemInserted(DiagramItem *item);
@@ -113,6 +124,11 @@ private:
     QColor myTextColor;
     QColor myItemColor;
     QColor myLineColor;
+
+    QPen boxPen;
+
+    QList<QGraphicsRectItem*> rectangles;
+    QList<QGraphicsRectItem*> boxes;
 };
 //! [0]
 

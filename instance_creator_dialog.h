@@ -17,6 +17,10 @@ public:
     ~Instance_creator_dialog(){if(recInstance != nullptr) delete recInstance;}
 
     void create_instance();
+    RectangleInstance *getInstance();
+
+signals:
+    void newInstance(RectangleInstance *instance);
 
 private:
     QSpinBox *amount_box;

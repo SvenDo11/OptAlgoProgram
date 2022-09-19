@@ -52,10 +52,12 @@
 #include "diagramitem.h"
 #include "diagramscene.h"
 #include "diagramtextitem.h"
+#include "geometrieneighbor.h"
 #include "mainwindow.h"
 #include "instance_creator_dialog.h"
 
 #include <QtWidgets>
+#include <QtConcurrent/QtConcurrentRun>>
 
 const int InsertTextButton = 10;
 
@@ -89,6 +91,12 @@ MainWindow::MainWindow()
     setUnifiedTitleAndToolBarOnMac(true);
 
     instance_dialog = new Instance_creator_dialog(this);
+    connect(instance_dialog, &Instance_creator_dialog::newInstance,
+            scene, &DiagramScene::initRectangles);
+
+    runner = new Algorithmrunner(this);
+    connect(runner, &Algorithmrunner::updateRectangles,
+            scene, &DiagramScene::updateRectangles);
 }
 //! [0]
 
@@ -442,6 +450,10 @@ void MainWindow::createActions()
     aboutAction = new QAction(tr("A&bout"), this);
     aboutAction->setShortcut(tr("F1"));
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
+
+    runLocalSearchAction = new QAction(QIcon(":/images/italic.png"), tr("Run Local Search"), this);
+    runLocalSearchAction->setStatusTip(tr("Run local Search"));
+    connect(runLocalSearchAction, &QAction::triggered, this, &MainWindow::runLocalSearch);
 }
 
 //! [24]
@@ -455,6 +467,8 @@ void MainWindow::createMenus()
     itemMenu->addSeparator();
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
+    itemMenu->addSeparator();
+    itemMenu->addAction(runLocalSearchAction);
 
     aboutMenu = menuBar()->addMenu(tr("&Help"));
     aboutMenu->addAction(aboutAction);
@@ -650,3 +664,8 @@ QIcon MainWindow::createColorIcon(QColor color)
     return QIcon(pixmap);
 }
 //! [32]
+
+void MainWindow::runLocalSearch()
+{
+    runner->runLocalSearchGeometrie(instance_dialog->getInstance());
+}

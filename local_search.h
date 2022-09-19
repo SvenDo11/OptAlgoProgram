@@ -8,18 +8,18 @@ void local_search(InputT I,
                   std::function<SolutionT(InputT)> initial_solution,
                   std::function<SolutionT(InputT, SolutionT)> neighborhood,
                   std::function<int(InputT, SolutionT)> cost,
-                  std::function<bool()> terminate)
+                  std::function<bool(InputT, SolutionT)> terminate)
 {
     // Initialize Parameter
     SolutionT s = initial_solution(I);
-    int current_cost = cost(s);
+    int current_cost = cost(I, s);
 
     // Main Loop
-    while(terminate())
+    while(!terminate(I, s))
     {
         SolutionT new_s = neighborhood(I, s);
 
-        int new_cost = cost(new_s);
+        int new_cost = cost(I, new_s);
 
         if(new_cost < current_cost)
         {

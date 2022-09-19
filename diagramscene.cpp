@@ -66,6 +66,9 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
     myItemColor = Qt::white;
     myTextColor = Qt::black;
     myLineColor = Qt::black;
+
+    boxPen = QPen(Qt::black);
+    boxPen.setWidth(5);
 }
 //! [0]
 
@@ -241,3 +244,70 @@ bool DiagramScene::isItemChange(int type) const
     return std::find_if(items.begin(), items.end(), cb) != items.end();
 }
 //! [14]
+
+void DiagramScene::cleanUp()
+{
+    clear();
+    rectangles.clear();
+    boxes.clear();
+}
+
+void DiagramScene::initRectangles(RectangleInstance *instance)
+{
+    cleanUp();
+
+    int boxLength = instance->getBoxlength();
+    int currentX = 0;
+    for(auto block: *(instance))
+    {
+        QGraphicsRectItem *rec = new QGraphicsRectItem(currentX, 0,
+                                                       block->width * SCALE,
+                                                       block->heigth * SCALE);
+
+        currentX += block->width * SCALE;
+
+        addItem(rec);
+        rectangles.append(rec);
+    }
+
+    int currentY = SCALE * (boxLength + 1);
+    currentX = SCALE;
+    for(int i = 0; i < instance->length(); i++)
+    {
+        QGraphicsRectItem *box = new QGraphicsRectItem(currentX,
+                                                       currentY,
+                                                       boxLength * SCALE,
+                                                       boxLength * SCALE);
+        box->setPen(boxPen);
+        addItem(box);
+        boxes.append(box);
+
+        currentY += SCALE * (boxLength + 1);
+        if(currentY >= (LINES * boxLength + LINES + 1) * SCALE)
+        {
+            currentY = SCALE * (boxLength + 1);
+            currentX += SCALE * (boxLength + 1);
+        }
+    }
+}
+
+void DiagramScene::updateRectangles(RectSolution sol)
+{
+    int i = 0;
+    // iterate over boxes
+    for(auto box: boxes)
+    {
+        int boxX = box->rect().x();
+        int boxY = box->rect().y();
+        // for each box, look for rectangles in sol
+        for(int rectID: sol.boxes[i])
+        {
+            // update according rectangle
+            auto rect = rectangles[rectID];
+            rectType *solRect = sol.rectangles[rectID];
+            rect->setRect(boxX + solRect->x * SCALE, boxY + solRect->y * SCALE,
+                          solRect->w * SCALE, solRect->h * SCALE);
+        }
+        i++;
+    }
+}

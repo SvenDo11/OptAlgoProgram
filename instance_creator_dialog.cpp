@@ -104,4 +104,11 @@ void Instance_creator_dialog::create_instance()
     std::cout << recInstance << std::endl;
 
     close();
+
+    emit newInstance(recInstance);
+}
+
+RectangleInstance *Instance_creator_dialog::getInstance()
+{
+    return recInstance;
 }

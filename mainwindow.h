@@ -53,6 +53,7 @@
 
 #include "diagramitem.h"
 #include "instance_creator_dialog.h"
+#include "algorithmrunner.h"
 #include <QMainWindow>
 
 class DiagramScene;
@@ -102,6 +103,8 @@ private slots:
     void itemSelected(QGraphicsItem *item);
     void about();
 
+    void runLocalSearch();
+
 private:
     void createToolBox();
     void createActions();
@@ -125,6 +128,9 @@ private:
     QAction *toFrontAction;
     QAction *sendBackAction;
     QAction *aboutAction;
+
+    // My actions
+    QAction *runLocalSearchAction;
 
     QMenu *fileMenu;
     QMenu *itemMenu;
@@ -156,6 +162,7 @@ private:
     QAction *lineAction;
 
     Instance_creator_dialog *instance_dialog;
+    Algorithmrunner *runner;
 };
 //! [0]
 
