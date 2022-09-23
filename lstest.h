@@ -13,7 +13,7 @@ protected:
     void keptS() override;
     int initialSolution(int i) override;
     int neighborhood(int s) override;
-    int cost(int s) override;
+    double cost(int s) override;
     bool terminate(int s) override;
 
 private:

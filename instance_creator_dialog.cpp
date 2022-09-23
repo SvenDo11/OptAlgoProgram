@@ -24,11 +24,13 @@ Instance_creator_dialog::Instance_creator_dialog(QWidget *parent): QDialog(paren
     QLabel *amount_label = new QLabel(QString("Amount Rectangles:"), this);
     amount_box = new QSpinBox(this);
     amount_box->setRange(1, 10000);
+    amount_box->setValue(5);
     lyt_meta->addRow(amount_label, amount_box);
 
     QLabel *length_label = new QLabel(QString("Boxlength L:"), this);
     length_box = new QSpinBox(this);
     length_box->setRange(1, MAX_LENGTH);
+    length_box->setValue(12);
     lyt_meta->addRow(length_label, length_box);
     lyt_main->addLayout(lyt_meta);
 
@@ -43,9 +45,11 @@ Instance_creator_dialog::Instance_creator_dialog(QWidget *parent): QDialog(paren
         QLabel *min_label = new QLabel(QString("Min"), this);
         QSpinBox *min_box = new QSpinBox(this);
         min_box->setRange(1, MAX_LENGTH);
+        min_box->setValue(2);
         QLabel *max_label = new QLabel(QString("Max"), this);
         QSpinBox *max_box = new QSpinBox(this);
         max_box->setRange(1, MAX_LENGTH);
+        max_box->setValue(8);
 
         lyt_main->addWidget(label);
         lyt_form->addRow(min_label, min_box);
@@ -97,8 +101,8 @@ void Instance_creator_dialog::create_instance()
     for(int i = 0; i < amount; ++i)
     {
         recInstance->add_rectangle(i,
-                                   gen->bounded(width_min, width_max),
-                                   gen->bounded(height_min, height_max));
+                                   gen->bounded(width_min, width_max+1),
+                                   gen->bounded(height_min, height_max+1));
     }
 
     std::cout << recInstance << std::endl;

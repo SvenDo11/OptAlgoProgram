@@ -29,7 +29,7 @@ int LSTest::neighborhood(int s)
     return newS;
 }
 
-int LSTest::cost(int s)
+double LSTest::cost(int s)
 {
     return std::pow((s-offsetX), 2) + offsetY;
 }

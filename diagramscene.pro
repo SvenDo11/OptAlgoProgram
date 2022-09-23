@@ -3,31 +3,31 @@ requires(qtConfig(fontcombobox))
 
 HEADERS	    =   mainwindow.h \
 		algorithmrunner.h \
+		algotoolbox.h \
 		diagramitem.h \
 		diagramscene.h \
 		arrow.h \
 		diagramtextitem.h \
-		geometrieneighbor.h \
 		instance_creator_dialog.h \
 		local_search.h \
 		localsearch.h \
 		lsgeometrie.h \
+		lspermutation.h \
 		lstest.h \
-		neighborhood.h \
 		rectangleinstance.h \
 		rectsolution.h
 SOURCES	    =   mainwindow.cpp \
 		algorithmrunner.cpp \
+		algotoolbox.cpp \
 		diagramitem.cpp \
-		geometrieneighbor.cpp \
 		instance_creator_dialog.cpp \
 		lsgeometrie.cpp \
+		lspermutation.cpp \
 		lstest.cpp \
 		main.cpp \
 		arrow.cpp \
 		diagramtextitem.cpp \
 		diagramscene.cpp \
-		neighborhood.cpp \
 		rectangleinstance.cpp \
 		rectsolution.cpp
 RESOURCES   =	diagramscene.qrc

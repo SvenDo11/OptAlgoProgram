@@ -52,12 +52,11 @@
 #include "diagramitem.h"
 #include "diagramscene.h"
 #include "diagramtextitem.h"
-#include "geometrieneighbor.h"
 #include "mainwindow.h"
 #include "instance_creator_dialog.h"
 
 #include <QtWidgets>
-#include <QtConcurrent/QtConcurrentRun>>
+#include <QtConcurrent/QtConcurrentRun>
 
 const int InsertTextButton = 10;
 
@@ -395,6 +394,25 @@ void MainWindow::createToolBox()
     QWidget *backgroundWidget = new QWidget;
     backgroundWidget->setLayout(backgroundLayout);
 
+    // My stuff
+    QVBoxLayout *runOptionLayout = new QVBoxLayout;
+    runOptionLayout->setAlignment(Qt::AlignTop);
+
+    QLabel *algorithmLabel = new QLabel(tr("Algorithm:"));
+    runOptionLayout->addWidget(algorithmLabel);
+    QComboBox *algorithmBox = new QComboBox;
+    algorithmBox->addItem("Local Search");
+    algorithmBox->addItem("Greedy");
+    runOptionLayout->addWidget(algorithmBox);
+    QLabel *variationLabel = new QLabel(tr("Variation:"));
+    runOptionLayout->addWidget(variationLabel);
+    QComboBox *variationBox = new QComboBox;
+    variationBox->addItem("Geometrie");
+    variationBox->addItem("Permutation");
+    runOptionLayout->addWidget(variationBox);
+    QWidget *runOptionWidget = new QWidget;
+    runOptionWidget->setLayout(runOptionLayout);
+
 
 //! [22]
     toolBox = new QToolBox;
@@ -402,6 +420,7 @@ void MainWindow::createToolBox()
     toolBox->setMinimumWidth(itemWidget->sizeHint().width());
     toolBox->addItem(itemWidget, tr("Basic Flowchart Shapes"));
     toolBox->addItem(backgroundWidget, tr("Backgrounds"));
+    toolBox->addItem(runOptionWidget, tr("Algorithms"));
 }
 //! [22]
 

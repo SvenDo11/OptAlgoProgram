@@ -12,16 +12,33 @@ typedef struct rectType
         x(posX), y(posY), w(width), h(heigth), box(box){}
     rectType():
         x(0), y(0), w(0), h(0), box(0){}
+    rectType(const rectType &other)
+    {
+        x = other.x;
+        y = other.y;
+        w = other.w;
+        h = other.h;
+        box = other.box;
+    }
+    rectType &operator= (const rectType &other)
+    {
+        x = other.x;
+        y = other.y;
+        w = other.w;
+        h = other.h;
+        box = other.box;
+        return *this;
+    }
     int x;
     int y;
     int w;
     int h;
     int box;
 
-    friend std::ostream& operator<<(std::ostream& os, rectType *rec)
+    friend std::ostream& operator<<(std::ostream& os, rectType rec)
     {
-        os << "x: " << rec->x << ", y: " << rec->y
-           << ", w: " << rec->w << ", h: " << rec->h;
+        os << "x: " << rec.x << ", y: " << rec.y
+           << ", w: " << rec.w << ", h: " << rec.h << ", box: " << rec.box;
         return os;
     }
 } rectType;
@@ -29,17 +46,20 @@ typedef struct rectType
 class RectSolution
 {
 public:
+    RectSolution();
     RectSolution(int rectAmount, int boxLength);
-    RectSolution(RectSolution const &other);
+    RectSolution(const RectSolution &other);
     ~RectSolution();
 
-    bool isValid(rectType* newRect);
-    bool isValid(int id, rectType* newRect);
-    void addRect(int id, rectType* newRect);
+    RectSolution& operator=(const RectSolution& other);
+
+    bool isValid(rectType newRect);
+    bool isValid(int id, rectType newRect);
+    void addRect(int id, rectType newRect);
     void addRect(int id, int x, int y, int w, int h, int box);
 
     QVarLengthArray<QList<int>> boxes;
-    QVarLengthArray<rectType*> rectangles;
+    QVarLengthArray<rectType> rectangles;
 
     int boxLength;
 

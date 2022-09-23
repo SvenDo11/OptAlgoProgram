@@ -2,13 +2,17 @@
 
 #include <iostream>
 
+RectSolution::RectSolution(): boxLength(0)
+{
+
+}
 RectSolution::RectSolution(int rectAmount, int boxLength): boxLength(boxLength)
 {
     boxes.resize(rectAmount);
     rectangles.resize(rectAmount);
 }
 
-RectSolution::RectSolution(RectSolution const &other)
+RectSolution::RectSolution(const RectSolution &other)
 {
     //std::cout << "Copyed a RectSolution" << std::endl;
     boxLength = other.boxLength;
@@ -18,51 +22,74 @@ RectSolution::RectSolution(RectSolution const &other)
 
     for(int i = 0; i < other.rectangles.length(); ++i)
     {
-        rectType *rect = new rectType(*other.rectangles[i]);
+        rectType rect = rectType(other.rectangles[i]);
         addRect(i, rect);
     }
 }
 
 RectSolution::~RectSolution()
 {
-    for(auto rect: rectangles)
-        delete rect;
 }
 
-bool RectSolution::isValid(rectType *newRect)
+RectSolution& RectSolution::operator=(const RectSolution& other)
+{
+    if(this == &other)
+        return *this;
+    boxes.clear();
+    rectangles.clear();
+
+    boxLength = other.boxLength;
+
+    boxes.resize(other.boxes.length());
+    rectangles.resize(other.rectangles.length());
+
+    for(int i = 0; i < other.rectangles.length(); ++i)
+    {
+        rectType rect = rectType(other.rectangles[i]);
+        addRect(i, rect);
+    }
+    return *this;
+}
+
+bool RectSolution::isValid(rectType newRect)
 {
     return isValid(-1, newRect);
 }
 
-bool RectSolution::isValid(int id, rectType *newRect)
+bool RectSolution::isValid(int id, rectType newRect)
 {
-    if(newRect->x + newRect->w > boxLength
-            && newRect->x + newRect->w > boxLength)
+    if(newRect.x < 0 || newRect.y < 0)
+        return false;
+    if(newRect.x + newRect.w > boxLength
+            && newRect.x + newRect.w > boxLength)
         return false;
 
-    QList<int> box = boxes[newRect->box];
+    if(newRect.box < 0 || newRect.box >= boxLength)
+        return false;
+
+    QList<int> box = boxes[newRect.box];
     for(int i: box)
     {
         if(i == id)
             continue;
 
-        rectType *rect = rectangles[i];
-        if(isOverlapping(rect->x, rect->x + rect->w, newRect->x, newRect->x + newRect->w)
-                &&isOverlapping(rect->y, rect->y + rect->h, newRect->y, newRect->y + newRect->h))
+        rectType rect = rectangles[i];
+        if(isOverlapping(rect.x, rect.x + rect.w, newRect.x, newRect.x + newRect.w)
+                &&isOverlapping(rect.y, rect.y + rect.h, newRect.y, newRect.y + newRect.h))
             return false;
     }
     return true;
 }
 
-void RectSolution::addRect(int id, rectType *newRect)
+void RectSolution::addRect(int id, rectType newRect)
 {
-    boxes[newRect->box].append(id);
+    boxes[newRect.box].append(id);
     rectangles[id] = newRect;
 }
 
 void RectSolution::addRect(int id, int x, int y, int w, int h, int box)
 {
-    rectType *rect = new rectType(x, y, box, w, h);
+    rectType rect = rectType(x, y, box, w, h);
     addRect(id, rect);
 }
 

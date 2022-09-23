@@ -10,15 +10,18 @@ class Algorithmrunner : public QObject
 {
     Q_OBJECT
 public:
-    enum algorithm { localSearchGeometrie};
+    enum algorithm { localSearchGeometrie, localSearchPermutation};
 
     explicit Algorithmrunner(QObject *parent = nullptr);
 
     void runAlgorithm(RectangleInstance *instance);
 
     void runLocalSearchGeometrie(RectangleInstance *instance);
+    void runLocalSearchPermutation(RectangleInstance *instance);
+
 public slots:
     void setAlgorithm(Algorithmrunner::algorithm algo);
+    void drawSRequested(RectSolution S);
 
 signals:
     void updateRectangles(RectSolution S);

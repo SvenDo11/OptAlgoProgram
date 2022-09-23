@@ -53,6 +53,7 @@
 
 #include <QGraphicsSceneMouseEvent>
 #include <QTextCursor>
+#include <QApplication>
 
 //! [0]
 DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
@@ -304,10 +305,11 @@ void DiagramScene::updateRectangles(RectSolution sol)
         {
             // update according rectangle
             auto rect = rectangles[rectID];
-            rectType *solRect = sol.rectangles[rectID];
-            rect->setRect(boxX + solRect->x * SCALE, boxY + solRect->y * SCALE,
-                          solRect->w * SCALE, solRect->h * SCALE);
+            rectType solRect = sol.rectangles[rectID];
+            rect->setRect(boxX + solRect.x * SCALE, boxY + solRect.y * SCALE,
+                          solRect.w * SCALE, solRect.h * SCALE);
         }
         i++;
     }
+    QApplication::processEvents();
 }
