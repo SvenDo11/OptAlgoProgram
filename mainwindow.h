@@ -51,6 +51,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "algotoolbox.h"
 #include "diagramitem.h"
 #include "instance_creator_dialog.h"
 #include "algorithmrunner.h"
@@ -147,7 +148,7 @@ private:
     QComboBox *fontSizeCombo;
     QFontComboBox *fontCombo;
 
-    QToolBox *toolBox;
+    AlgoToolBox *toolBox;
     QButtonGroup *buttonGroup;
     QButtonGroup *pointerTypeGroup;
     QButtonGroup *backgroundButtonGroup;

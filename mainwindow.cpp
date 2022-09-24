@@ -49,6 +49,7 @@
 ****************************************************************************/
 
 #include "arrow.h"
+#include "algotoolbox.h"
 #include "diagramitem.h"
 #include "diagramscene.h"
 #include "diagramtextitem.h"
@@ -64,8 +65,11 @@ const int InsertTextButton = 10;
 MainWindow::MainWindow()
 {
     createActions();
-    createToolBox();
+    //createToolBox();
     createMenus();
+
+    toolBox = new AlgoToolBox;
+    toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
 
     scene = new DiagramScene(itemMenu, this);
     scene->setSceneRect(QRectF(0, 0, 5000, 5000));
@@ -96,6 +100,8 @@ MainWindow::MainWindow()
     runner = new Algorithmrunner(this);
     connect(runner, &Algorithmrunner::updateRectangles,
             scene, &DiagramScene::updateRectangles);
+    connect(toolBox, &AlgoToolBox::setAlgorithm,
+            runner, &Algorithmrunner::setAlgorithm);
 }
 //! [0]
 
@@ -415,7 +421,7 @@ void MainWindow::createToolBox()
 
 
 //! [22]
-    toolBox = new QToolBox;
+    //toolBox = new QToolBox;
     toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
     toolBox->setMinimumWidth(itemWidget->sizeHint().width());
     toolBox->addItem(itemWidget, tr("Basic Flowchart Shapes"));

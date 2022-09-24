@@ -105,12 +105,14 @@ RectSolution LSGeometrie::neighborhood(RectSolution s)
                 assert(1 == 0);
                 break;
         }
-        if(nextIsLast())
-            return s;
-        else if(newS.isValid(currentRect, *rect))
+        if(newS.isValid(currentRect, *rect))
             return newS;
         else
+        {
+            if(nextIsLast())
+                return s;
             advanceOp();
+        }
     }
 }
 
@@ -213,5 +215,6 @@ void LSGeometrie::updatedS()
 
 void LSGeometrie::keptS()
 {
-    advanceOp();
+    if(!nextIsLast())
+        advanceOp();
 }

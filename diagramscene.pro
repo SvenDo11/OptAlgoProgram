@@ -12,6 +12,7 @@ HEADERS	    =   mainwindow.h \
 		local_search.h \
 		localsearch.h \
 		lsgeometrie.h \
+		lsoverlap.h \
 		lspermutation.h \
 		lstest.h \
 		rectangleinstance.h \
@@ -22,6 +23,7 @@ SOURCES	    =   mainwindow.cpp \
 		diagramitem.cpp \
 		instance_creator_dialog.cpp \
 		lsgeometrie.cpp \
+		lsoverlap.cpp \
 		lspermutation.cpp \
 		lstest.cpp \
 		main.cpp \

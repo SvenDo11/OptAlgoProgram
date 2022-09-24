@@ -2,6 +2,7 @@
 
 #include "lsgeometrie.h"
 #include "lspermutation.h"
+#include "lsoverlap.h"
 
 #include <QtConcurrent/QtConcurrentRun>
 
@@ -14,6 +15,7 @@ Algorithmrunner::Algorithmrunner(QObject *parent)
 void Algorithmrunner::setAlgorithm(Algorithmrunner::algorithm algo)
 {
     currentAlgorithm = algo;
+    std::cout << "Algorithmrunner set algorithm to: " << algo << std::endl;
 }
 
 void Algorithmrunner::runAlgorithm(RectangleInstance *instance)
@@ -29,6 +31,11 @@ void Algorithmrunner::runAlgorithm(RectangleInstance *instance)
         case Algorithmrunner::algorithm::localSearchPermutation:
         {
             fut = QtConcurrent::run(&Algorithmrunner::runLocalSearchPermutation, this, instance);
+            break;
+        }
+        case Algorithmrunner::algorithm::localSearchGeometrieOverlap:
+        {
+            fut = QtConcurrent::run(&Algorithmrunner::runLocalSearchOverlap, this, instance);
             break;
         }
         default:
@@ -51,6 +58,14 @@ void Algorithmrunner::runLocalSearchPermutation(RectangleInstance *instance)
         return;
 
     LSPermutation searcher([this](RectSolution s){drawSRequested(s);});
+    searcher.runLocalSearch(instance);
+}
+
+void Algorithmrunner::runLocalSearchOverlap(RectangleInstance *instance)
+{
+    if(instance == nullptr)
+        return;
+    LSOverlap searcher([this](RectSolution s){drawSRequested(s);});
     searcher.runLocalSearch(instance);
 }
 

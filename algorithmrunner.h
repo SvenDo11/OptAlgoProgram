@@ -10,7 +10,7 @@ class Algorithmrunner : public QObject
 {
     Q_OBJECT
 public:
-    enum algorithm { localSearchGeometrie, localSearchPermutation};
+    enum algorithm { localSearchGeometrie, localSearchPermutation, localSearchGeometrieOverlap};
 
     explicit Algorithmrunner(QObject *parent = nullptr);
 
@@ -18,6 +18,7 @@ public:
 
     void runLocalSearchGeometrie(RectangleInstance *instance);
     void runLocalSearchPermutation(RectangleInstance *instance);
+    void runLocalSearchOverlap(RectangleInstance *instance);
 
 public slots:
     void setAlgorithm(Algorithmrunner::algorithm algo);
