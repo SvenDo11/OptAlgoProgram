@@ -164,11 +164,6 @@ double LSGeometrie::cost(RectSolution s)
 
 bool LSGeometrie::terminate(RectSolution s)
 {
-    if(updated)
-    {
-        std::cout << "\n=========\n" << s << std::endl;
-        updated = false;
-    }
     iteration = iteration + 1;
     if(iteration % 10 == 0)
         drawS(s);

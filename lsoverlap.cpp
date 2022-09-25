@@ -2,21 +2,13 @@
 
 #include <QRandomGenerator>
 
-LSOverlap::LSOverlap(): drawS([](RectSolution){})
+LSOverlap::LSOverlap()
 {
 
 }
-LSOverlap::LSOverlap(std::function<void(RectSolution)> func): drawS(func)
+LSOverlap::LSOverlap(std::function<void(RectSolution)> func): LSGeometrie(func)
 {
 
-}
-
-void LSOverlap::updatedS()
-{
-}
-
-void LSOverlap::keptS()
-{
 }
 
 RectSolution LSOverlap::initialSolution(RectangleInstance *instance)
@@ -43,14 +35,82 @@ RectSolution LSOverlap::initialSolution(RectangleInstance *instance)
     return sol;
 }
 
-RectSolution LSOverlap::neighborhood(RectSolution n)
+RectSolution LSOverlap::neighborhood(RectSolution s)
 {
+    RectSolution newS;
+    while(true)
+    {
+        newS = RectSolution(s);
+        rectType *rect = &newS.rectangles[currentRect];
+        int temp = 0;
+        switch(currentOp)
+        {
+            case PREVBOX:
+            {
+                int boxID = rect->box;
+                if(boxID-1 < 0)
+                    rect->box = -1;
+                else
+                {
+                    for(boxID = boxID-1; boxID > 0; boxID--)
+                        if(!newS.boxes[boxID].isEmpty())
+                            break;
+                    switchBox(newS, currentRect, boxID);
+                    rect->x = newS.boxLength - rect->w;
+                    rect->y = newS.boxLength - rect->h;
+                }
+                break;
+            }
+            case NEXTBOX:
+            {
+                int boxID = rect->box;
+                if(boxID+1 >= newS.boxes.length())
+                    rect->box = -1;
+                else
+                {
+                    for(boxID = boxID + 1; boxID < newS.boxes.length()-1; boxID++)
+                        if(!newS.boxes[boxID].isEmpty())
+                            break;
+                    switchBox(newS, currentRect, boxID);
+                    rect->x = newS.boxLength - rect->w;
+                    rect->y = newS.boxLength - rect->h;
+                }
+                break;
+            }
+            case MOVEDOWN:
+                rect->y = rect->y - 1;
+                break;
+            case MOVELEFT:
+                rect->x = rect->x - 1;
+                break;
+            case MOVERIGHT:
+                rect->y = rect->y + 1;
+                break;
+            case MOVEUP:
+                rect->x = rect->x + 1;
+                break;
+            case ROTATE:
+                temp = rect->w;
+                rect->w = rect->h;
+                rect->h = temp;
+                break;
+            default:
+                assert(1 == 0);
+                break;
+        }
+        if(newS.isContained(*rect))
+            return newS;
+        else
+        {
+            if(nextIsLast())
+                return s;
+            advanceOp();
+        }
+    }
+    return newS;
 }
 
 double LSOverlap::cost(RectSolution s)
 {
-}
-
-bool LSOverlap::terminate(RectSolution s)
-{
+    return 0.0;
 }

@@ -39,7 +39,8 @@ protected:
     double cost(Permutation s) override;
     bool terminate(Permutation s) override;
 
-    static RectSolution* genSolution(Permutation perm, RectSolution *sol, int rotateID = -1);
+    RectSolution* genSolution(Permutation perm, RectSolution *sol, int rotateID = -1);
+    bool nextIsLast();
 
 private:
     RectangleInstance *I;

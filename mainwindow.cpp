@@ -692,5 +692,5 @@ QIcon MainWindow::createColorIcon(QColor color)
 
 void MainWindow::runLocalSearch()
 {
-    runner->runLocalSearchGeometrie(instance_dialog->getInstance());
+    runner->runAlgorithm(instance_dialog->getInstance());
 }

@@ -58,13 +58,7 @@ bool RectSolution::isValid(rectType newRect)
 
 bool RectSolution::isValid(int id, rectType newRect)
 {
-    if(newRect.x < 0 || newRect.y < 0)
-        return false;
-    if(newRect.x + newRect.w > boxLength
-            && newRect.x + newRect.w > boxLength)
-        return false;
-
-    if(newRect.box < 0 || newRect.box >= boxLength)
+    if(!isContained(newRect))
         return false;
 
     QList<int> box = boxes[newRect.box];
@@ -78,6 +72,19 @@ bool RectSolution::isValid(int id, rectType newRect)
                 &&isOverlapping(rect.y, rect.y + rect.h, newRect.y, newRect.y + newRect.h))
             return false;
     }
+    return true;
+}
+
+bool RectSolution::isContained(rectType newRect)
+{
+    if(newRect.x < 0 || newRect.y < 0)
+        return false;
+    if(newRect.x + newRect.w > boxLength
+            || newRect.y + newRect.h > boxLength)
+        return false;
+    if(newRect.box < 0 || newRect.box > boxes.length())
+        return false;
+
     return true;
 }
 

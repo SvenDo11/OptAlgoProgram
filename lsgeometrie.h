@@ -31,7 +31,6 @@ protected:
     bool nextIsLast();
     void switchBox(RectSolution &sol, int id, int newBoxID);
 
-private:
     RectangleInstance *I;
     int currentRect = 0;
     int currentOp = 0;
