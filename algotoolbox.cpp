@@ -91,5 +91,17 @@ void AlgoToolBox::newAlgo()
             break;
         }
     }
+    case 1:
+    {
+        // greedy
+        switch(variationBox->currentIndex())
+        {
+        case 0:
+        {
+            emit setAlgorithm(Algorithmrunner::algorithm::greedyLargestFirst);
+            break;
+        }
+        }
+    }
     }
 }

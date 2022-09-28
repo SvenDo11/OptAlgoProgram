@@ -79,6 +79,8 @@ MainWindow::MainWindow()
             this, &MainWindow::textInserted);
     connect(scene, &DiagramScene::itemSelected,
             this, &MainWindow::itemSelected);
+    connect(scene, &DiagramScene::ensureVisible,
+            this, &MainWindow::ensureVisible);
     createToolbars();
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -102,6 +104,10 @@ MainWindow::MainWindow()
             scene, &DiagramScene::updateRectangles);
     connect(toolBox, &AlgoToolBox::setAlgorithm,
             runner, &Algorithmrunner::setAlgorithm);
+    connect(stopAlgorithmButton, &QToolButton::clicked,
+            runner, &Algorithmrunner::requestStop);
+    connect(runner, &Algorithmrunner::message,
+            this, &MainWindow::showMessage);
 }
 //! [0]
 
@@ -503,6 +509,18 @@ void MainWindow::createMenus()
 //! [25]
 void MainWindow::createToolbars()
 {
+    runAlgorithmButton = new QToolButton;
+    runAlgorithmButton->setIcon(QIcon(":/images/startIcon2.png"));
+    connect(runAlgorithmButton, &QToolButton::clicked,
+            this, &MainWindow::runLocalSearch);
+
+    stopAlgorithmButton = new QToolButton;
+    stopAlgorithmButton->setIcon(QIcon(":/images/stopIcon.png"));
+
+    algorunnerToolbar = addToolBar(tr("Exec"));
+    algorunnerToolbar->addWidget(runAlgorithmButton);
+    algorunnerToolbar->addWidget(stopAlgorithmButton);
+
 //! [25]
     editToolBar = addToolBar(tr("Edit"));
     editToolBar->addAction(deleteAction);
@@ -693,4 +711,14 @@ QIcon MainWindow::createColorIcon(QColor color)
 void MainWindow::runLocalSearch()
 {
     runner->runAlgorithm(instance_dialog->getInstance());
+}
+
+void MainWindow::showMessage(const QString &message, int timeout)
+{
+    statusBar()->showMessage(message, timeout);
+}
+
+void MainWindow::ensureVisible(const QRectF &rect)
+{
+    view->ensureVisible(rect);
 }

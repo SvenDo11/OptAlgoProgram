@@ -290,6 +290,10 @@ void DiagramScene::initRectangles(RectangleInstance *instance)
             currentX += SCALE * (boxLength + 1);
         }
     }
+
+    colorRectangles();
+
+    emit ensureVisible(QRectF(0, 0, currentX, ((LINES * boxLength + LINES + 1) * SCALE)));
 }
 
 void DiagramScene::updateRectangles(RectSolution sol)
@@ -312,4 +316,16 @@ void DiagramScene::updateRectangles(RectSolution sol)
         i++;
     }
     QApplication::processEvents();
+}
+
+void DiagramScene::colorRectangles()
+{
+    int i = 0;
+    for(QGraphicsRectItem *rect: rectangles)
+    {
+        rect->setBrush(colors[i]);
+        i++;
+        if(i >= colors.length())
+            i = 0;
+    }
 }

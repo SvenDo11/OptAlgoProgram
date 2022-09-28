@@ -58,9 +58,11 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
+#include <QColor>
 
 #define SCALE 20
 #define LINES 5
+#define ALPHA 200
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -104,11 +106,14 @@ signals:
     void itemInserted(DiagramItem *item);
     void textInserted(QGraphicsTextItem *item);
     void itemSelected(QGraphicsItem *item);
+    void ensureVisible(const QRectF &rect);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
+
+    void colorRectangles();
 
 private:
     bool isItemChange(int type) const;
@@ -129,6 +134,9 @@ private:
 
     QList<QGraphicsRectItem*> rectangles;
     QList<QGraphicsRectItem*> boxes;
+
+    QList<QColor> colors = {QColor(102, 255, 255, ALPHA), QColor(255, 153, 153, ALPHA), QColor(255,255, 103, ALPHA),
+                           QColor(204, 153, 255, ALPHA), QColor(153, 255, 153, ALPHA)};
 };
 //! [0]
 

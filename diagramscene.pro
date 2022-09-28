@@ -8,6 +8,8 @@ HEADERS	    =   mainwindow.h \
 		diagramscene.h \
 		arrow.h \
 		diagramtextitem.h \
+		greedy.h \
+		greedylargestfirst.h \
 		instance_creator_dialog.h \
 		local_search.h \
 		localsearch.h \
@@ -21,6 +23,7 @@ SOURCES	    =   mainwindow.cpp \
 		algorithmrunner.cpp \
 		algotoolbox.cpp \
 		diagramitem.cpp \
+		greedylargestfirst.cpp \
 		instance_creator_dialog.cpp \
 		lsgeometrie.cpp \
 		lsoverlap.cpp \

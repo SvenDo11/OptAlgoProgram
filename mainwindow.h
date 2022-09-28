@@ -105,6 +105,8 @@ private slots:
     void about();
 
     void runLocalSearch();
+    void showMessage(const QString &message, int timeout = 0);
+    void ensureVisible(const QRectF &rect);
 
 private:
     void createToolBox();
@@ -141,6 +143,7 @@ private:
     QToolBar *editToolBar;
     QToolBar *colorToolBar;
     QToolBar *pointerToolbar;
+    QToolBar *algorunnerToolbar;
 
     QComboBox *sceneScaleCombo;
     QComboBox *itemColorCombo;
@@ -155,6 +158,8 @@ private:
     QToolButton *fontColorToolButton;
     QToolButton *fillColorToolButton;
     QToolButton *lineColorToolButton;
+    QToolButton *runAlgorithmButton;
+    QToolButton *stopAlgorithmButton;
     QAction *boldAction;
     QAction *underlineAction;
     QAction *italicAction;

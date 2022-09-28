@@ -1,12 +1,18 @@
 #include "lsoverlap.h"
 
 #include <QRandomGenerator>
+#include <math.h>
 
 LSOverlap::LSOverlap()
 {
 
 }
 LSOverlap::LSOverlap(std::function<void(RectSolution)> func): LSGeometrie(func)
+{
+
+}
+LSOverlap::LSOverlap(std::function<void(RectSolution)> drawSFunc, std::function<bool()> stopFunc):
+    LSGeometrie(drawSFunc, stopFunc)
 {
 
 }
@@ -110,7 +116,76 @@ RectSolution LSOverlap::neighborhood(RectSolution s)
     return newS;
 }
 
+bool LSOverlap::terminate(RectSolution s)
+{
+    bool term = LSGeometrie::terminate(s);
+
+    if(iteration % 10 == 0)
+        allowedOverlap -= 0.05;
+    return term;
+}
+
 double LSOverlap::cost(RectSolution s)
 {
-    return 0.0;
+    double cost = 0;
+
+    // Punish overlap
+    for(QList<int> box: s.boxes)
+    {
+        for(int i = 0; i < box.length()-1; ++i)
+        {
+            for(int j = i+1; j < box.length(); ++j)
+            {
+                double overlap = calcOverlap(s.rectangles[box[i]], s.rectangles[box[j]]);
+                if(overlap > allowedOverlap)
+                    cost += overlap * PENALTY;
+            }
+        }
+    }
+    int fac = 1;
+    //for(fac = 1; fac < (PENALTY * pow(s.rectangles.length(), 2)); fac *= 10);
+
+    // Max cost for all boxes with one
+    double maxboxcost = s.boxes.length() * log(s.boxes.length()-1);
+    for(fac = 1; fac < maxboxcost; fac *= 10);
+
+    for(const QList<int> &box: s.boxes)
+    {
+        if(!box.empty())
+        {
+            cost += fac;
+            cost += log(s.boxes.length()+1 - box.length());
+        }
+    }
+
+    double maxheight = 1.5 * pow(s.boxLength, 2);
+    for(fac = 1; fac < maxheight; fac *= 10);
+    fac *= 10;
+    cost *= fac;
+
+    for(rectType &rec: s.rectangles)
+    {
+        cost += pow((rec.x + rec.w/2), 2) + pow((rec.y + rec.h/2), 2);
+    }
+    return cost;
+}
+
+double LSOverlap::calcOverlap(const rectType &rec1, const rectType &rec2)
+{
+    if(rec1.box != rec2.box)
+        return 0.0;
+
+    int overlapX = std::min(rec1.x+rec1.w, rec2.x+rec2.w) - std::max(rec1.x, rec2.x);
+    if(overlapX < 0)
+        overlapX = 0;
+
+    int overlapY = std::min(rec1.y+rec1.h, rec2.y+rec2.h) - std::max(rec1.y, rec2.y);
+    if(overlapY < 0)
+        overlapY = 0;
+
+    int overlapArea = overlapX * overlapY;
+    if(overlapArea == 0)
+        return 0.0;
+    int maxArea = std::max((rec1.w*rec1.h), (rec2.w*rec2.h));
+    return ((double) overlapArea)/((double) maxArea);
 }

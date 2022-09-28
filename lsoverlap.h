@@ -13,17 +13,22 @@
 #define MOVEUP 5
 #define ROTATE 6
 
+#define PENALTY 10
+
 //class LSOverlap : public LocalSearch<RectangleInstance*, RectSolution>
 class LSOverlap : public LSGeometrie
 {
 public:
     LSOverlap();
     LSOverlap(std::function<void(RectSolution)> func);
+    LSOverlap(std::function<void(RectSolution)> drawSFunc, std::function<bool()> stopFunc);
 
+    static double calcOverlap(const rectType &rec1, const rectType &rec2);
 protected:
     RectSolution initialSolution(RectangleInstance *I) override;
     RectSolution neighborhood(RectSolution n) override;
     double cost(RectSolution s) override;
+    bool terminate(RectSolution s) override;
 
 private:
     double allowedOverlap;

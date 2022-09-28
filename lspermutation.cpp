@@ -13,6 +13,21 @@ LSPermutation::LSPermutation(std::function<void(RectSolution)> func):
 {
 
 }
+LSPermutation::LSPermutation(std::function<void(RectSolution)> drawSFunc, std::function<bool()> stopFunc):
+    I(nullptr), S(nullptr), newS(nullptr),
+    drawS(drawSFunc), stopRequested(stopFunc), currentRect(0), currentOp(0), lastUpdatedRect(0), lastUpdatedOp(0)
+{
+
+}
+
+LSPermutation::~LSPermutation()
+{
+    if(S != nullptr)
+        delete S;
+    if(newS != nullptr)
+        delete newS;
+}
+
 void LSPermutation::updatedS()
 {
     lastUpdatedRect = currentRect;
@@ -96,7 +111,7 @@ bool LSPermutation::terminate(Permutation s)
 {
     drawS(*s.sol);
     // check if all neighbors have been checked without an improvement
-    return nextIsLast();
+    return nextIsLast() || stopRequested();
 }
 
 bool LSPermutation::nextIsLast()

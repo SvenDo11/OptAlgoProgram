@@ -21,7 +21,7 @@ private:
     void newAlgo();
     QStringList algoList = {"Local Search", "Greedy"};
     QStringList variantListLS = {"Geometrie", "Permutation", "Geometrie Overlap"};
-    QStringList variantListGreedy = {"A", "B"};
+    QStringList variantListGreedy = {"Largest First", "B"};
 
     QComboBox *algorithmBox;
     QComboBox *variationBox;

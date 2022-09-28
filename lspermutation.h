@@ -31,6 +31,8 @@ class LSPermutation : public LocalSearch<RectangleInstance*, Permutation>
 public:
     LSPermutation();
     LSPermutation(std::function<void(RectSolution)> func);
+    LSPermutation(std::function<void(RectSolution)> drawFunc, std::function<bool()> stopFunc);
+    ~LSPermutation();
 protected:
     void updatedS() override;
     void keptS() override;
@@ -48,11 +50,13 @@ private:
     RectSolution *newS;
 
     std::function<void(RectSolution)> drawS;
+    std::function<bool()> stopRequested = [](){return false;};
 
     int currentRect;
     int currentOp;
     int lastUpdatedRect;
     int lastUpdatedOp;
+
 };
 
 #endif // LSPERMUTATION_H

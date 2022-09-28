@@ -11,6 +11,9 @@ LSGeometrie::LSGeometrie()
 
 LSGeometrie::LSGeometrie(std::function<void(RectSolution)> func): drawS(func){}
 
+LSGeometrie::LSGeometrie(std::function<void(RectSolution)> drawSFunc, std::function<bool()> stopFunc):
+    drawS(drawSFunc), stopRequested(stopFunc){}
+
 RectSolution LSGeometrie::initialSolution(RectangleInstance *instance)
 {
     I = instance;
@@ -39,6 +42,7 @@ RectSolution LSGeometrie::initialSolution(RectangleInstance *instance)
         }
     }
 
+    updated = true;
     return sol;
 }
 
@@ -144,7 +148,7 @@ double LSGeometrie::cost(RectSolution s)
         if(!box.empty())
         {
             cost += fac;
-            cost += log(s.boxes.length() - box.length());
+            cost += log(s.boxes.length()+1 - box.length());
         }
     }
 
@@ -156,26 +160,20 @@ double LSGeometrie::cost(RectSolution s)
     for(rectType &rec: s.rectangles)
     {
         cost += pow((rec.x + rec.w/2), 2) + pow((rec.y + rec.h/2), 2);
-        //cost += pow(rec.x, 2) + pow(rec.y,2);
     }
-    std::cout << "Cost: " << cost << std::endl;
     return cost;
 }
 
 bool LSGeometrie::terminate(RectSolution s)
 {
     iteration = iteration + 1;
-    if(iteration % 10 == 0)
-        drawS(s);
-    /**
-    if(iteration == 1000)
+    if(updated && (iteration % 10 == 0))
     {
-        std::cout << "iteration limit reached" << std::endl;
-        return true;
+        updated = false;
+        drawS(s);
     }
-    */
     // check if all neighbors have been checked without an improvement
-    if(nextIsLast())
+    if(nextIsLast() || stopRequested())
         return true;
 
     return false;

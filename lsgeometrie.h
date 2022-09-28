@@ -18,6 +18,7 @@ class LSGeometrie : public LocalSearch<RectangleInstance*, RectSolution>
 public:
     LSGeometrie();
     LSGeometrie(std::function<void(RectSolution)> func);
+    LSGeometrie(std::function<void(RectSolution)> drawSFunc, std::function<bool()> stopFunc);
 
 protected:
     void updatedS() override;
@@ -37,6 +38,7 @@ protected:
     int iteration = 0;
 
     std::function<void(RectSolution)> drawS;
+    std::function<bool()> stopRequested = [](){return false;};
 
     int lastUpdatedRect = 0;
     int lastUpdatedOp = 0;
