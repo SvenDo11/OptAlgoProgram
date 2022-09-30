@@ -257,7 +257,11 @@ void DiagramScene::initRectangles(RectangleInstance *instance)
 {
     cleanUp();
 
+    LINES = floor(sqrt(instance->size()));
+    int rows = instance->size();
+
     int boxLength = instance->getBoxlength();
+    this->setSceneRect(0, 0, ((rows + 1)*(boxLength + 1)*SCALE), ((LINES + 1)*(boxLength + 1)*SCALE));
     int currentX = 0;
     for(auto block: *(instance))
     {

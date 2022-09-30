@@ -11,7 +11,7 @@ public:
     {
         SolutionT s = initialSolution(instance);
         SolutionT newS;
-        int currentCost = cost(s);
+        double currentCost = cost(s);
 
         while(!terminate(s))
         {

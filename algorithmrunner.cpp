@@ -8,7 +8,9 @@
 #include <QtConcurrent/QtConcurrentRun>
 
 Algorithmrunner::Algorithmrunner(QObject *parent)
-    : QObject{parent}, currentAlgorithm(Algorithmrunner::algorithm::localSearchGeometrie)
+    : QObject{parent}, currentAlgorithm(Algorithmrunner::algorithm::localSearchGeometrie),
+      animationType(Algorithmrunner::animation::timeBased),
+      updateInterval(20)
 {
 
 }
@@ -20,6 +22,10 @@ void Algorithmrunner::setAlgorithm(Algorithmrunner::algorithm algo)
 
 void Algorithmrunner::runAlgorithm(RectangleInstance *instance)
 {
+    if(isRunning)
+        return;
+    currentItteration = 0;
+    isRunning = true;
     QFuture<void> fut = QtConcurrent::run(&Algorithmrunner::execute, this, instance);
 }
 
@@ -67,15 +73,56 @@ void Algorithmrunner::execute(RectangleInstance *instance)
             break;
     }
     emit message("Finished " + algorithmName, 5000);
+    if(animationType != Algorithmrunner::animation::none)
+        emit updateRectangles(sol);
     stopRequest = false;
+    isRunning = false;
 }
 
 void Algorithmrunner::drawSRequested(RectSolution S)
 {
-    emit updateRectangles(S);
+    currentItteration++;
+    switch(animationType)
+    {
+    case Algorithmrunner::animation::timeBased:
+        if(QTime::currentTime() >= lastUpdated.addSecs(updateInterval))
+        {
+            emit updateRectangles(S);
+            lastUpdated = QTime::currentTime();
+        }
+        break;
+    case Algorithmrunner::animation::iterationBased:
+        if(currentItteration % updateInterval == 0)
+        {
+            emit updateRectangles(S);
+        }
+        break;
+    case Algorithmrunner::animation::step:
+        emit updateRectangles(S);
+        mut.lock();
+        condVar.wait(&mut);
+        mut.unlock();
+        break;
+    case Algorithmrunner::animation::none:
+        break;
+    }
 }
 
 void Algorithmrunner::requestStop()
 {
     stopRequest = true;
+}
+
+void Algorithmrunner::advance()
+{
+    condVar.wakeOne();
+}
+
+void Algorithmrunner::setAnimation(Algorithmrunner::animation newAnimation)
+{
+    animationType = newAnimation;
+}
+void Algorithmrunner::setInterval(int newInterval)
+{
+    updateInterval = newInterval;
 }

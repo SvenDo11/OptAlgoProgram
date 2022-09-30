@@ -61,7 +61,6 @@
 #include <QColor>
 
 #define SCALE 20
-#define LINES 5
 #define ALPHA 200
 
 QT_BEGIN_NAMESPACE
@@ -117,6 +116,8 @@ protected:
 
 private:
     bool isItemChange(int type) const;
+
+    int LINES = 5;
 
     DiagramItem::DiagramType myItemType;
     QMenu *myItemMenu;

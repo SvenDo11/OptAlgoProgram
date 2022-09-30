@@ -81,6 +81,11 @@ MainWindow::MainWindow()
             this, &MainWindow::itemSelected);
     connect(scene, &DiagramScene::ensureVisible,
             this, &MainWindow::ensureVisible);
+
+    instance_dialog = new Instance_creator_dialog(this);
+    connect(instance_dialog, &Instance_creator_dialog::newInstance,
+            scene, &DiagramScene::initRectangles);
+
     createToolbars();
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -95,10 +100,6 @@ MainWindow::MainWindow()
     setWindowTitle(tr("Diagramscene"));
     setUnifiedTitleAndToolBarOnMac(true);
 
-    instance_dialog = new Instance_creator_dialog(this);
-    connect(instance_dialog, &Instance_creator_dialog::newInstance,
-            scene, &DiagramScene::initRectangles);
-
     runner = new Algorithmrunner(this);
     connect(runner, &Algorithmrunner::updateRectangles,
             scene, &DiagramScene::updateRectangles);
@@ -108,6 +109,12 @@ MainWindow::MainWindow()
             runner, &Algorithmrunner::requestStop);
     connect(runner, &Algorithmrunner::message,
             this, &MainWindow::showMessage);
+    connect(toolBox, &AlgoToolBox::setAnimation,
+            runner, &Algorithmrunner::setAnimation);
+    connect(toolBox, &AlgoToolBox::setInterval,
+            runner, &Algorithmrunner::setInterval);
+    connect(advanceButton, &QToolButton::clicked,
+            runner, &Algorithmrunner::advance);
 }
 //! [0]
 
@@ -482,9 +489,9 @@ void MainWindow::createActions()
     aboutAction->setShortcut(tr("F1"));
     connect(aboutAction, &QAction::triggered, this, &MainWindow::about);
 
-    runLocalSearchAction = new QAction(QIcon(":/images/italic.png"), tr("Run Local Search"), this);
-    runLocalSearchAction->setStatusTip(tr("Run local Search"));
-    connect(runLocalSearchAction, &QAction::triggered, this, &MainWindow::runLocalSearch);
+    runAlgorithmAction = new QAction(QIcon(":/images/italic.png"), tr("Run Local Search"), this);
+    runAlgorithmAction->setStatusTip(tr("Run local Search"));
+    connect(runAlgorithmAction, &QAction::triggered, this, &MainWindow::runAlgorithm);
 }
 
 //! [24]
@@ -499,7 +506,7 @@ void MainWindow::createMenus()
     itemMenu->addAction(toFrontAction);
     itemMenu->addAction(sendBackAction);
     itemMenu->addSeparator();
-    itemMenu->addAction(runLocalSearchAction);
+    itemMenu->addAction(runAlgorithmAction);
 
     aboutMenu = menuBar()->addMenu(tr("&Help"));
     aboutMenu->addAction(aboutAction);
@@ -509,91 +516,29 @@ void MainWindow::createMenus()
 //! [25]
 void MainWindow::createToolbars()
 {
+    createInstanceButton = new QToolButton;
+    createInstanceButton->setIcon(QIcon(":/images/nextIcon.png"));
+    connect(createInstanceButton, &QToolButton::clicked,
+            instance_dialog, &Instance_creator_dialog::show);
+
+    instanceToolbar = addToolBar(tr("Instance"));
+    instanceToolbar->addWidget(createInstanceButton);
+
     runAlgorithmButton = new QToolButton;
     runAlgorithmButton->setIcon(QIcon(":/images/startIcon2.png"));
     connect(runAlgorithmButton, &QToolButton::clicked,
-            this, &MainWindow::runLocalSearch);
+            this, &MainWindow::runAlgorithm);
 
     stopAlgorithmButton = new QToolButton;
     stopAlgorithmButton->setIcon(QIcon(":/images/stopIcon.png"));
 
+    advanceButton = new QToolButton;
+    advanceButton->setIcon(QIcon(":/images/nextIcon.png"));
+
     algorunnerToolbar = addToolBar(tr("Exec"));
     algorunnerToolbar->addWidget(runAlgorithmButton);
     algorunnerToolbar->addWidget(stopAlgorithmButton);
-
-//! [25]
-    editToolBar = addToolBar(tr("Edit"));
-    editToolBar->addAction(deleteAction);
-    editToolBar->addAction(toFrontAction);
-    editToolBar->addAction(sendBackAction);
-
-    fontCombo = new QFontComboBox();
-    connect(fontCombo, &QFontComboBox::currentFontChanged,
-            this, &MainWindow::currentFontChanged);
-
-    fontSizeCombo = new QComboBox;
-    fontSizeCombo->setEditable(true);
-    for (int i = 8; i < 30; i = i + 2)
-        fontSizeCombo->addItem(QString().setNum(i));
-    QIntValidator *validator = new QIntValidator(2, 64, this);
-    fontSizeCombo->setValidator(validator);
-    connect(fontSizeCombo, &QComboBox::currentTextChanged,
-            this, &MainWindow::fontSizeChanged);
-
-    fontColorToolButton = new QToolButton;
-    fontColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-    fontColorToolButton->setMenu(createColorMenu(SLOT(textColorChanged()), Qt::black));
-    textAction = fontColorToolButton->menu()->defaultAction();
-    fontColorToolButton->setIcon(createColorToolButtonIcon(":/images/textpointer.png", Qt::black));
-    fontColorToolButton->setAutoFillBackground(true);
-    connect(fontColorToolButton, &QAbstractButton::clicked,
-            this, &MainWindow::textButtonTriggered);
-
-//! [26]
-    fillColorToolButton = new QToolButton;
-    fillColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-    fillColorToolButton->setMenu(createColorMenu(SLOT(itemColorChanged()), Qt::white));
-    fillAction = fillColorToolButton->menu()->defaultAction();
-    fillColorToolButton->setIcon(createColorToolButtonIcon(
-                                     ":/images/floodfill.png", Qt::white));
-    connect(fillColorToolButton, &QAbstractButton::clicked,
-            this, &MainWindow::fillButtonTriggered);
-//! [26]
-
-    lineColorToolButton = new QToolButton;
-    lineColorToolButton->setPopupMode(QToolButton::MenuButtonPopup);
-    lineColorToolButton->setMenu(createColorMenu(SLOT(lineColorChanged()), Qt::black));
-    lineAction = lineColorToolButton->menu()->defaultAction();
-    lineColorToolButton->setIcon(createColorToolButtonIcon(
-                                     ":/images/linecolor.png", Qt::black));
-    connect(lineColorToolButton, &QAbstractButton::clicked,
-            this, &MainWindow::lineButtonTriggered);
-
-    textToolBar = addToolBar(tr("Font"));
-    textToolBar->addWidget(fontCombo);
-    textToolBar->addWidget(fontSizeCombo);
-    textToolBar->addAction(boldAction);
-    textToolBar->addAction(italicAction);
-    textToolBar->addAction(underlineAction);
-
-    colorToolBar = addToolBar(tr("Color"));
-    colorToolBar->addWidget(fontColorToolButton);
-    colorToolBar->addWidget(fillColorToolButton);
-    colorToolBar->addWidget(lineColorToolButton);
-
-    QToolButton *pointerButton = new QToolButton;
-    pointerButton->setCheckable(true);
-    pointerButton->setChecked(true);
-    pointerButton->setIcon(QIcon(":/images/pointer.png"));
-    QToolButton *linePointerButton = new QToolButton;
-    linePointerButton->setCheckable(true);
-    linePointerButton->setIcon(QIcon(":/images/linepointer.png"));
-
-    pointerTypeGroup = new QButtonGroup(this);
-    pointerTypeGroup->addButton(pointerButton, int(DiagramScene::MoveItem));
-    pointerTypeGroup->addButton(linePointerButton, int(DiagramScene::InsertLine));
-    connect(pointerTypeGroup, QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked),
-            this, &MainWindow::pointerGroupClicked);
+    algorunnerToolbar->addWidget(advanceButton);
 
     sceneScaleCombo = new QComboBox;
     QStringList scales;
@@ -604,8 +549,6 @@ void MainWindow::createToolbars()
             this, &MainWindow::sceneScaleChanged);
 
     pointerToolbar = addToolBar(tr("Pointer type"));
-    pointerToolbar->addWidget(pointerButton);
-    pointerToolbar->addWidget(linePointerButton);
     pointerToolbar->addWidget(sceneScaleCombo);
 //! [27]
 }
@@ -708,7 +651,7 @@ QIcon MainWindow::createColorIcon(QColor color)
 }
 //! [32]
 
-void MainWindow::runLocalSearch()
+void MainWindow::runAlgorithm()
 {
     runner->runAlgorithm(instance_dialog->getInstance());
 }

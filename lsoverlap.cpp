@@ -119,7 +119,7 @@ RectSolution LSOverlap::neighborhood(RectSolution s)
 bool LSOverlap::terminate(RectSolution s)
 {
     bool term = LSGeometrie::terminate(s);
-
+    iteration++;
     if(iteration % 10 == 0)
         allowedOverlap -= 0.05;
     return term;

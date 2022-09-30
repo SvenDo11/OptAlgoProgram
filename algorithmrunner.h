@@ -5,12 +5,15 @@
 #include "rectsolution.h"
 #include <QObject>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QWaitCondition>
+#include <QTime>
 
 class Algorithmrunner : public QObject
 {
     Q_OBJECT
 public:
     enum algorithm { localSearchGeometrie, localSearchPermutation, localSearchGeometrieOverlap, greedyLargestFirst};
+    enum animation { timeBased, iterationBased, step, none};
 
     explicit Algorithmrunner(QObject *parent = nullptr);
 
@@ -20,6 +23,9 @@ public slots:
     void setAlgorithm(Algorithmrunner::algorithm algo);
     void drawSRequested(RectSolution S);
     void requestStop();
+    void advance();
+    void setAnimation(Algorithmrunner::animation newAnimation);
+    void setInterval(int interval);
 
 signals:
     void updateRectangles(RectSolution S);
@@ -32,7 +38,16 @@ private:
     algorithm currentAlgorithm;
     int cnt = 0;
 
+    bool isRunning = false;
     bool stopRequest = false;
+
+    animation animationType = timeBased;
+    QTime lastUpdated = QTime(0,0);
+    int currentItteration = 0;
+    int updateInterval;
+
+    QMutex mut;
+    QWaitCondition condVar;
 };
 
 #endif // ALGORITHMRUNNER_H

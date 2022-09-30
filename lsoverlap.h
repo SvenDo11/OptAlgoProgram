@@ -32,6 +32,7 @@ protected:
 
 private:
     double allowedOverlap;
+    int iteration = 0;
 };
 
 #endif // LSOVERLAP_H

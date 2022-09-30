@@ -166,12 +166,8 @@ double LSGeometrie::cost(RectSolution s)
 
 bool LSGeometrie::terminate(RectSolution s)
 {
-    iteration = iteration + 1;
-    if(updated && (iteration % 10 == 0))
-    {
-        updated = false;
-        drawS(s);
-    }
+    drawS(s);
+
     // check if all neighbors have been checked without an improvement
     if(nextIsLast() || stopRequested())
         return true;

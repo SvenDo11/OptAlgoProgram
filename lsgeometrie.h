@@ -35,7 +35,6 @@ protected:
     RectangleInstance *I;
     int currentRect = 0;
     int currentOp = 0;
-    int iteration = 0;
 
     std::function<void(RectSolution)> drawS;
     std::function<bool()> stopRequested = [](){return false;};

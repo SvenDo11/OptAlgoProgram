@@ -104,7 +104,7 @@ private slots:
     void itemSelected(QGraphicsItem *item);
     void about();
 
-    void runLocalSearch();
+    void runAlgorithm();
     void showMessage(const QString &message, int timeout = 0);
     void ensureVisible(const QRectF &rect);
 
@@ -133,7 +133,7 @@ private:
     QAction *aboutAction;
 
     // My actions
-    QAction *runLocalSearchAction;
+    QAction *runAlgorithmAction;
 
     QMenu *fileMenu;
     QMenu *itemMenu;
@@ -144,6 +144,7 @@ private:
     QToolBar *colorToolBar;
     QToolBar *pointerToolbar;
     QToolBar *algorunnerToolbar;
+    QToolBar *instanceToolbar;
 
     QComboBox *sceneScaleCombo;
     QComboBox *itemColorCombo;
@@ -152,14 +153,19 @@ private:
     QFontComboBox *fontCombo;
 
     AlgoToolBox *toolBox;
+
     QButtonGroup *buttonGroup;
     QButtonGroup *pointerTypeGroup;
     QButtonGroup *backgroundButtonGroup;
     QToolButton *fontColorToolButton;
     QToolButton *fillColorToolButton;
     QToolButton *lineColorToolButton;
+
     QToolButton *runAlgorithmButton;
     QToolButton *stopAlgorithmButton;
+    QToolButton *createInstanceButton;
+    QToolButton *advanceButton;
+
     QAction *boldAction;
     QAction *underlineAction;
     QAction *italicAction;
