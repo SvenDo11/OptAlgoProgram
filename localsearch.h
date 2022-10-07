@@ -9,18 +9,17 @@ public:
 
     SolutionT runLocalSearch(InputT instance)
     {
-        SolutionT s = initialSolution(instance);
-        SolutionT newS;
-        double currentCost = cost(s);
+        currentS = initialSolution(instance);
+        currentCost = cost(currentS);
 
-        while(!terminate(s))
+        while(!terminate(currentS))
         {
-            newS = neighborhood(s);
+            newS = neighborhood(currentS);
             double newCost = cost(newS);
 
             if(newCost < currentCost)
             {
-                s = newS;
+                currentS = newS;
                 currentCost = newCost;
 
                 updatedS();
@@ -30,7 +29,7 @@ public:
                 keptS();
             }
         }
-        return s;
+        return currentS;
     }
 
     SolutionT operator() (InputT instance)
@@ -45,6 +44,9 @@ protected:
     virtual SolutionT neighborhood(SolutionT n) = 0;
     virtual double cost(SolutionT s) = 0;
     virtual bool terminate(SolutionT s) = 0;
+
+    SolutionT currentS, newS;
+    double currentCost;
 };
 
 #endif // LOCALSEARCH_H

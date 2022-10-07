@@ -31,7 +31,7 @@ private:
 
     QStringList algoList = {"Local Search", "Greedy"};
     QStringList variantListLS = {"Geometrie", "Permutation", "Geometrie Overlap"};
-    QStringList variantListGreedy = {"Largest First", "B"};
+    QStringList variantListGreedy = {"Largest First", "Best Fit"};
 
     QComboBox *algorithmBox;
     QComboBox *variationBox;

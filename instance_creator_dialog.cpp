@@ -95,16 +95,8 @@ void Instance_creator_dialog::create_instance()
     int height_min = height_min_box->value();
     int height_max = height_max_box->value();
 
-    QRandomGenerator *gen = QRandomGenerator::global();
     recInstance = new RectangleInstance(amount, L);
-
-    for(int i = 0; i < amount; ++i)
-    {
-        recInstance->add_rectangle(i,
-                                   gen->bounded(width_min, width_max+1),
-                                   gen->bounded(height_min, height_max+1));
-    }
-
+    recInstance->fillWithRandom(width_min, width_max, height_min, height_max);
     std::cout << recInstance << std::endl;
 
     close();

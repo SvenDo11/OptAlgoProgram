@@ -9,6 +9,7 @@ HEADERS	    =   mainwindow.h \
 		arrow.h \
 		diagramtextitem.h \
 		greedy.h \
+		greedybestfit.h \
 		greedylargestfirst.h \
 		instance_creator_dialog.h \
 		local_search.h \
@@ -18,11 +19,14 @@ HEADERS	    =   mainwindow.h \
 		lspermutation.h \
 		lstest.h \
 		rectangleinstance.h \
-		rectsolution.h
+		rectsolution.h \
+		tester.h \
+		testrunner.h
 SOURCES	    =   mainwindow.cpp \
 		algorithmrunner.cpp \
 		algotoolbox.cpp \
 		diagramitem.cpp \
+		greedybestfit.cpp \
 		greedylargestfirst.cpp \
 		instance_creator_dialog.cpp \
 		lsgeometrie.cpp \
@@ -34,7 +38,9 @@ SOURCES	    =   mainwindow.cpp \
 		diagramtextitem.cpp \
 		diagramscene.cpp \
 		rectangleinstance.cpp \
-		rectsolution.cpp
+		rectsolution.cpp \
+		tester.cpp \
+		testrunner.cpp
 RESOURCES   =	diagramscene.qrc
 
 

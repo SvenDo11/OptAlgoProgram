@@ -56,6 +56,8 @@ public:
     bool isValid(rectType newRect);
     bool isValid(int id, rectType newRect);
     bool isContained(rectType newRect);
+    bool isValid();
+    int usedBoxes();
     void addRect(int id, rectType newRect);
     void addRect(int id, int x, int y, int w, int h, int box);
 

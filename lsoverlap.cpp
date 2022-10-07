@@ -43,6 +43,13 @@ RectSolution LSOverlap::initialSolution(RectangleInstance *instance)
 
 RectSolution LSOverlap::neighborhood(RectSolution s)
 {
+    if(hardFix)
+    {
+        hardFix = false;
+        currentS = fixOverlaps(s);
+        return currentS;
+    }
+
     RectSolution newS;
     while(true)
     {
@@ -121,7 +128,19 @@ bool LSOverlap::terminate(RectSolution s)
     bool term = LSGeometrie::terminate(s);
     iteration++;
     if(iteration % 10 == 0)
-        allowedOverlap -= 0.05;
+        allowedOverlap = (allowedOverlap <= 0) ? 0 : allowedOverlap - 0.05;
+    if(term && !s.isValid() && !stopRequested())
+    {
+        if(allowedOverlap <= 0)
+        {
+            // need to resolve overlaps manuali
+            if(PENALTY < 100000000)
+                PENALTY *= 10;
+            hardFix = true;
+        }
+        advanceOp();
+        return false;
+    }
     return term;
 }
 
@@ -188,4 +207,34 @@ double LSOverlap::calcOverlap(const rectType &rec1, const rectType &rec2)
         return 0.0;
     int maxArea = std::max((rec1.w*rec1.h), (rec2.w*rec2.h));
     return ((double) overlapArea)/((double) maxArea);
+}
+
+RectSolution LSOverlap::fixOverlaps(RectSolution sol)
+{
+    RectSolution newSol(sol.rectangles.length(), sol.boxLength);
+    QRandomGenerator *gen = QRandomGenerator::global();
+    for(int id = 0; id < sol.rectangles.length(); id++)
+    {
+        rectType rect = sol.rectangles[id];
+        if(sol.isValid(id, rect))
+                newSol.addRect(id, rect);
+        else
+        {
+            // set random location
+            while(true)
+            {
+                int newBox = gen->bounded(0, sol.boxes.length());
+                int newX = gen->bounded(0, sol.boxLength - rect.w);
+                int newY = gen->bounded(0, sol.boxLength - rect.h);
+                rectType newRect(newX, newY, newBox, rect.w, rect.h);
+                if(sol.isValid(id, newRect) && newSol.isValid(id, newRect))
+                {
+                    newSol.addRect(id, newRect);
+                    break;
+                }
+            }
+        }
+    }
+    assert(newSol.isValid());
+    return newSol;
 }

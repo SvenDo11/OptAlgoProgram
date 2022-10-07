@@ -86,6 +86,8 @@ MainWindow::MainWindow()
     connect(instance_dialog, &Instance_creator_dialog::newInstance,
             scene, &DiagramScene::initRectangles);
 
+    tester = new Tester(this);
+
     createToolbars();
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -360,7 +362,7 @@ void MainWindow::about()
                        tr("The <b>Diagram Scene</b> example shows "
                           "use of the graphics framework."));
 }
-//! [20]
+//! [20] // <a target="_blank" href="https://icons8.com/icon/40886/test">Test</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 
 //! [21]
 void MainWindow::createToolBox()
@@ -521,8 +523,14 @@ void MainWindow::createToolbars()
     connect(createInstanceButton, &QToolButton::clicked,
             instance_dialog, &Instance_creator_dialog::show);
 
+    runTestButton = new QToolButton;
+    runTestButton->setIcon(QIcon(":/images/nextIcon.png"));
+    connect(runTestButton, &QToolButton::clicked,
+            tester, &Tester::show);
+
     instanceToolbar = addToolBar(tr("Instance"));
     instanceToolbar->addWidget(createInstanceButton);
+    instanceToolbar->addWidget(runTestButton);
 
     runAlgorithmButton = new QToolButton;
     runAlgorithmButton->setIcon(QIcon(":/images/startIcon2.png"));
@@ -664,4 +672,9 @@ void MainWindow::showMessage(const QString &message, int timeout)
 void MainWindow::ensureVisible(const QRectF &rect)
 {
     view->ensureVisible(rect);
+}
+
+void MainWindow::runTester()
+{
+    tester->show();
 }

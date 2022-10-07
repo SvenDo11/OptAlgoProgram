@@ -6,7 +6,7 @@
 
 LSGeometrie::LSGeometrie()
 {
-    drawS = [](RectSolution s) {std::cout << s << std::endl;};
+    drawS = [](RectSolution s) {};
 }
 
 LSGeometrie::LSGeometrie(std::function<void(RectSolution)> func): drawS(func){}
@@ -198,7 +198,6 @@ void LSGeometrie::updatedS()
     lastUpdatedOp = currentOp;
     lastUpdatedRect = currentRect;
 
-    std::cout << "Updated S to newS: " << std::endl;
     updated =true;
 }
 

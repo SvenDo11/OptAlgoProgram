@@ -139,6 +139,11 @@ void AlgoToolBox::newAlgo()
             emit setAlgorithm(Algorithmrunner::algorithm::greedyLargestFirst);
             break;
         }
+        case 1:
+        {
+            emit setAlgorithm(Algorithmrunner::algorithm::greedyBestFit);
+            break;
+        }
         }
         break;
     }

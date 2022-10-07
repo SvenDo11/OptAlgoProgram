@@ -12,7 +12,8 @@ class Algorithmrunner : public QObject
 {
     Q_OBJECT
 public:
-    enum algorithm { localSearchGeometrie, localSearchPermutation, localSearchGeometrieOverlap, greedyLargestFirst};
+    enum algorithm { localSearchGeometrie, localSearchPermutation, localSearchGeometrieOverlap,
+                     greedyLargestFirst, greedyBestFit};
     enum animation { timeBased, iterationBased, step, none};
 
     explicit Algorithmrunner(QObject *parent = nullptr);

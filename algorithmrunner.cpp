@@ -4,6 +4,7 @@
 #include "lspermutation.h"
 #include "lsoverlap.h"
 #include "greedylargestfirst.h"
+#include "greedybestfit.h"
 
 #include <QtConcurrent/QtConcurrentRun>
 
@@ -67,6 +68,13 @@ void Algorithmrunner::execute(RectangleInstance *instance)
             GreedyLargestFirst searcher(drawFunc);
             sol = searcher.runGreedyAlgorithm(instance);
             algorithmName = "Greedy Largest First";
+            break;
+        }
+        case Algorithmrunner::algorithm::greedyBestFit:
+        {
+            GreedyBestFit searcher(drawFunc);
+            sol = searcher.runGreedyAlgorithm(instance);
+            algorithmName = "Greedy Best Fit";
             break;
         }
         default:

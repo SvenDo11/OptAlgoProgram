@@ -36,7 +36,6 @@ void LSPermutation::updatedS()
     delete S;
     S = newS;
     newS = nullptr;
-    std::cout << "updated" <<std::endl;
 }
 void LSPermutation::keptS()
 {
@@ -46,6 +45,10 @@ void LSPermutation::keptS()
 Permutation LSPermutation::initialSolution(RectangleInstance *instance)
 {
     I = instance;
+    currentRect = 0;
+    currentOp = 1;
+    lastUpdatedRect = 0;
+    lastUpdatedRect = 1;
 
     Permutation perm(I->size());
     for(int i = 0; i < I->size(); ++i)
@@ -66,13 +69,14 @@ Permutation LSPermutation::neighborhood(Permutation perm)
     currentOp++;
     if(currentOp > I->size())
     {
-        currentOp = 0;
         currentRect++;
-        if(currentRect >= I->size())
+        if(currentRect >= I->size() - 1)
             currentRect = 0;
+        currentOp = currentRect + 1;
     }
 
     Permutation newPerm(I->size());
+    int rotateID = -1;
     for(int i = 0; i < I->size(); ++i)
     {
         newPerm[i] = perm[i];
@@ -82,9 +86,7 @@ Permutation LSPermutation::neighborhood(Permutation perm)
         newPerm[currentRect] = perm[currentOp];
         newPerm[currentOp] = perm[currentRect];
     }
-
-    int rotateID = -1;
-    if(currentOp == I->size())
+    else
     {
         rotateID = currentRect;
     }
@@ -104,7 +106,6 @@ double LSPermutation::cost(Permutation s)
     for(QList<int> &box: s.sol->boxes)
         if(!box.isEmpty())
             cost++;
-    std::cout << cost <<std::endl;
     return cost;
 }
 bool LSPermutation::terminate(Permutation s)
@@ -123,20 +124,30 @@ bool LSPermutation::nextIsLast()
     // next rect first op
     if(currentRect + 1 == lastUpdatedRect
             && currentOp == I->size()
-            && lastUpdatedOp == 0)
+            && lastUpdatedOp == lastUpdatedRect + 1)
         return true;
     //next rect first op for first rect
     if(currentRect == I->size()-1
             && currentOp == I->size()
             && lastUpdatedRect == 0
-            && lastUpdatedOp == 0)
+            && lastUpdatedOp == 1)
         return true;
     return false;
 }
 RectSolution* LSPermutation::genSolution(Permutation perm, RectSolution *sol, int rotateID)
 {
     RectSolution *newS = new RectSolution(I->length(), I->getBoxlength());
-    for(int i = 0; i < newS->rectangles.length(); ++i)
+    int i = 0;
+    if(sol != nullptr)
+    {
+        for(i = 0; i < currentRect; i++)
+        {
+            int id = perm[i];
+            rectType rec(sol->rectangles[id]);
+            newS->addRect(id, rec);
+        }
+    }
+    for(; i < newS->rectangles.length(); ++i)
     {
         int id = perm[i];
         int y = 0;

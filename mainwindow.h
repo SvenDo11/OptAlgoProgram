@@ -55,6 +55,7 @@
 #include "diagramitem.h"
 #include "instance_creator_dialog.h"
 #include "algorithmrunner.h"
+#include "tester.h"
 #include <QMainWindow>
 
 class DiagramScene;
@@ -105,6 +106,7 @@ private slots:
     void about();
 
     void runAlgorithm();
+    void runTester();
     void showMessage(const QString &message, int timeout = 0);
     void ensureVisible(const QRectF &rect);
 
@@ -165,6 +167,7 @@ private:
     QToolButton *stopAlgorithmButton;
     QToolButton *createInstanceButton;
     QToolButton *advanceButton;
+    QToolButton *runTestButton;
 
     QAction *boldAction;
     QAction *underlineAction;
@@ -175,6 +178,7 @@ private:
 
     Instance_creator_dialog *instance_dialog;
     Algorithmrunner *runner;
+    Tester *tester;
 };
 //! [0]
 

@@ -26,6 +26,7 @@ public:
 
     void add_rectangle(int id, int width, int heigth);
     int getBoxlength();
+    void fillWithRandom(int wMin, int wMax, int hMin, int hMax);
 
     friend std::ostream& operator<<(std::ostream& os, RectangleInstance *rec);
 private:

@@ -13,8 +13,6 @@
 #define MOVEUP 5
 #define ROTATE 6
 
-#define PENALTY 10
-
 //class LSOverlap : public LocalSearch<RectangleInstance*, RectSolution>
 class LSOverlap : public LSGeometrie
 {
@@ -30,9 +28,13 @@ protected:
     double cost(RectSolution s) override;
     bool terminate(RectSolution s) override;
 
+    RectSolution fixOverlaps(RectSolution);
+
 private:
     double allowedOverlap;
+    bool hardFix = false;
     int iteration = 0;
+    int PENALTY = 100;
 };
 
 #endif // LSOVERLAP_H
