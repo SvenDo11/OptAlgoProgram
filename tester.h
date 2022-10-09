@@ -25,6 +25,8 @@ public slots:
 
     void print(const std::string &msg);
 private:
+    QFont getMonospaceFont();
+
     QSpinBox *instanceBox;
     QSpinBox *amountBox;
     QSpinBox *lengthBox;

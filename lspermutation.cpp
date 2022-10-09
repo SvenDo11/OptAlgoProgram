@@ -48,7 +48,7 @@ Permutation LSPermutation::initialSolution(RectangleInstance *instance)
     currentRect = 0;
     currentOp = 1;
     lastUpdatedRect = 0;
-    lastUpdatedRect = 1;
+    lastUpdatedOp = 1;
 
     Permutation perm(I->size());
     for(int i = 0; i < I->size(); ++i)
@@ -66,14 +66,6 @@ Permutation LSPermutation::initialSolution(RectangleInstance *instance)
 }
 Permutation LSPermutation::neighborhood(Permutation perm)
 {
-    currentOp++;
-    if(currentOp > I->size())
-    {
-        currentRect++;
-        if(currentRect >= I->size() - 1)
-            currentRect = 0;
-        currentOp = currentRect + 1;
-    }
 
     Permutation newPerm(I->size());
     int rotateID = -1;
@@ -111,28 +103,15 @@ double LSPermutation::cost(Permutation s)
 bool LSPermutation::terminate(Permutation s)
 {
     drawS(*s.sol);
+    nextOp();
     // check if all neighbors have been checked without an improvement
     return nextIsLast() || stopRequested();
 }
 
 bool LSPermutation::nextIsLast()
 {
-    // next op in current rect
-    if(currentRect == lastUpdatedRect
-            && currentOp + 1 == lastUpdatedOp)
-        return true;
-    // next rect first op
-    if(currentRect + 1 == lastUpdatedRect
-            && currentOp == I->size()
-            && lastUpdatedOp == lastUpdatedRect + 1)
-        return true;
-    //next rect first op for first rect
-    if(currentRect == I->size()-1
-            && currentOp == I->size()
-            && lastUpdatedRect == 0
-            && lastUpdatedOp == 1)
-        return true;
-    return false;
+    return (currentRect == lastUpdatedRect
+            && currentOp == lastUpdatedOp);
 }
 RectSolution* LSPermutation::genSolution(Permutation perm, RectSolution *sol, int rotateID)
 {
@@ -150,7 +129,6 @@ RectSolution* LSPermutation::genSolution(Permutation perm, RectSolution *sol, in
     for(; i < newS->rectangles.length(); ++i)
     {
         int id = perm[i];
-        int y = 0;
         int w = (sol == nullptr) ? I->value(id)->width : sol->rectangles[id].w;
         int h = (sol == nullptr) ? I->value(id)->heigth : sol->rectangles[id].h;
         if(id == rotateID)
@@ -160,38 +138,53 @@ RectSolution* LSPermutation::genSolution(Permutation perm, RectSolution *sol, in
             h = temp;
         }
         int x = I->getBoxlength()-w;
+        int y = I->getBoxlength()-h;
 
         rectType rec(x, y, 0, w, h);
-        bool foundY = false;
-        // find right y height, for right box.
+        // find right box.
         for(int b = 0; b < newS->boxes.length(); ++b)
         {
-           rec.box = b;
-           for(int j = 0; j < newS->boxLength - h; j++)
-           {
-               rec.y = j;
-               if(newS->isValid(rec))
-               {
-                   foundY = true;
-                   break;
-               }
-           }
-           if(foundY)
-               break;
-       }
+            rec.box = b;
+            if(newS->isValid(rec))
+                break;
+        }
 
-       // Push as far to the left as posible
-       for(int newX = x; newX >= 0; newX--)
-       {
-           int oldX = rec.x;
-           rec.x = newX;
+        // Push Y as close to 0 as posible
+        for(int newY = y; newY >= 0; newY--)
+        {
+            int oldY = rec.y;
+            rec.y = newY;
+            if(!newS->isValid(rec))
+            {
+                rec.y = oldY;
+                break;
+            }
+        }
+
+        // Push as far to the left as posible
+        for(int newX = x; newX >= 0; newX--)
+        {
+            int oldX = rec.x;
+            rec.x = newX;
             if(!newS->isValid(rec))
             {
                 rec.x = oldX;
                 break;
             }
-       }
-       newS->addRect(id, rec);
+        }
+        newS->addRect(id, rec);
     }
     return newS;
+}
+
+void LSPermutation::nextOp()
+{
+    currentOp++;
+    if(currentOp > I->size())
+    {
+        currentRect++;
+        if(currentRect >= I->size() - 1)
+            currentRect = 0;
+        currentOp = currentRect + 1;
+    }
 }

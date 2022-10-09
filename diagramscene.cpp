@@ -68,8 +68,10 @@ DiagramScene::DiagramScene(QMenu *itemMenu, QObject *parent)
     myTextColor = Qt::black;
     myLineColor = Qt::black;
 
-    boxPen = QPen(Qt::black);
-    boxPen.setWidth(5);
+    boxPen = QPen(Qt::black, 5);
+    boxHighlightPen = QPen(highlightColor, 7);
+    rectPen = QPen(Qt::black);
+    rectHighlightPen = QPen(highlightColor, 3);
 }
 //! [0]
 
@@ -261,6 +263,8 @@ void DiagramScene::initRectangles(RectangleInstance *instance)
     int rows = instance->size();
 
     int boxLength = instance->getBoxlength();
+    //SCALE = (boxLength >= 100) ? 1 : ((boxLength < 20) ? 20 : 10);
+
     this->setSceneRect(0, 0, ((rows + 1)*(boxLength + 1)*SCALE), ((LINES + 1)*(boxLength + 1)*SCALE));
     int currentX = 0;
     for(auto block: *(instance))
@@ -306,6 +310,7 @@ void DiagramScene::updateRectangles(RectSolution sol)
     // iterate over boxes
     for(auto box: boxes)
     {
+        bool boxUpdated = false;
         int boxX = box->rect().x();
         int boxY = box->rect().y();
         // for each box, look for rectangles in sol
@@ -313,10 +318,24 @@ void DiagramScene::updateRectangles(RectSolution sol)
         {
             // update according rectangle
             auto rect = rectangles[rectID];
+            QRectF oldRect = rect->rect();
             rectType solRect = sol.rectangles[rectID];
-            rect->setRect(boxX + solRect.x * SCALE, boxY + solRect.y * SCALE,
+            QRectF newRect(boxX + solRect.x * SCALE, boxY + solRect.y * SCALE,
                           solRect.w * SCALE, solRect.h * SCALE);
+            if(oldRect != newRect)
+            {
+                rect->setPen(rectHighlightPen);
+                rect->setRect(newRect);
+                rect->setBrush(highlightColors[rectID % highlightColors.length()]);
+                boxUpdated = true;
+            }
+            else
+            {
+                rect->setPen(rectPen);
+                rect->setBrush(colors[rectID % colors.length()]);
+            }
         }
+        box->setPen((boxUpdated) ? boxHighlightPen : boxPen );
         i++;
     }
     QApplication::processEvents();
@@ -332,4 +351,24 @@ void DiagramScene::colorRectangles()
         if(i >= colors.length())
             i = 0;
     }
+}
+
+void DiagramScene::resetRectangles()
+{
+    int i = 0;
+    int currentX = 0;
+    for(QGraphicsRectItem *rec: rectangles)
+    {
+        QRectF baseRect(currentX, 0, rec->rect().width(), rec->rect().height());
+        currentX += baseRect.width();
+        rec->setRect(baseRect);
+        rec->setPen(rectPen);
+        rec->setBrush(colors[i % colors.length()]);
+        i++;
+    }
+    for(auto box: boxes)
+    {
+        box->setPen(boxPen);
+    }
+    QApplication::processEvents();
 }

@@ -18,38 +18,38 @@
 
 Instance_creator_dialog::Instance_creator_dialog(QWidget *parent): QDialog(parent)
 {
-    QVBoxLayout *lyt_main = new QVBoxLayout(this);
+    QVBoxLayout *lyt_main = new QVBoxLayout;
 
-    QFormLayout *lyt_meta = new QFormLayout(this);
-    QLabel *amount_label = new QLabel(QString("Amount Rectangles:"), this);
-    amount_box = new QSpinBox(this);
+    QFormLayout *lyt_meta = new QFormLayout;
+    QLabel *amount_label = new QLabel(QString("Amount Rectangles:"));
+    amount_box = new QSpinBox;
     amount_box->setRange(1, 10000);
-    amount_box->setValue(5);
+    amount_box->setValue(20);
     lyt_meta->addRow(amount_label, amount_box);
 
-    QLabel *length_label = new QLabel(QString("Boxlength L:"), this);
-    length_box = new QSpinBox(this);
+    QLabel *length_label = new QLabel(QString("Boxlength L:"));
+    length_box = new QSpinBox;
     length_box->setRange(1, MAX_LENGTH);
-    length_box->setValue(12);
+    length_box->setValue(20);
     lyt_meta->addRow(length_label, length_box);
     lyt_main->addLayout(lyt_meta);
 
     for(int i = 0; i < 2; ++i)
     {
-        QFrame *hline = new QFrame(this);
+        QFrame *hline = new QFrame;
         hline->setFrameShape(QFrame::HLine);
         lyt_main->addWidget(hline);
 
-        QFormLayout *lyt_form = new QFormLayout(this);
-        QLabel *label = new QLabel( i ? "Height:" : "Width:", this);
-        QLabel *min_label = new QLabel(QString("Min"), this);
-        QSpinBox *min_box = new QSpinBox(this);
+        QFormLayout *lyt_form = new QFormLayout;
+        QLabel *label = new QLabel( i ? "Height:" : "Width:");
+        QLabel *min_label = new QLabel(QString("Min"));
+        QSpinBox *min_box = new QSpinBox;
         min_box->setRange(1, MAX_LENGTH);
         min_box->setValue(2);
-        QLabel *max_label = new QLabel(QString("Max"), this);
-        QSpinBox *max_box = new QSpinBox(this);
+        QLabel *max_label = new QLabel(QString("Max"));
+        QSpinBox *max_box = new QSpinBox;
         max_box->setRange(1, MAX_LENGTH);
-        max_box->setValue(8);
+        max_box->setValue(18);
 
         lyt_main->addWidget(label);
         lyt_form->addRow(min_label, min_box);

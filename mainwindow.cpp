@@ -99,7 +99,7 @@ MainWindow::MainWindow()
     widget->setLayout(layout);
 
     setCentralWidget(widget);
-    setWindowTitle(tr("Diagramscene"));
+    setWindowTitle(tr("Optimierungs Algorithmen"));
     setUnifiedTitleAndToolBarOnMac(true);
 
     runner = new Algorithmrunner(this);
@@ -358,92 +358,12 @@ void MainWindow::itemSelected(QGraphicsItem *item)
 //! [20]
 void MainWindow::about()
 {
-    QMessageBox::about(this, tr("About Diagram Scene"),
-                       tr("The <b>Diagram Scene</b> example shows "
-                          "use of the graphics framework."));
+    QMessageBox::about(this, tr("About Optimierungs Algorithmen"),
+                       tr("This is a Application to run and test different optimization algorithms."
+                          "Some of the Icons used were kindly provided by https://icons8.com ."));
 }
 //! [20] // <a target="_blank" href="https://icons8.com/icon/40886/test">Test</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
-
-//! [21]
-void MainWindow::createToolBox()
-{
-    buttonGroup = new QButtonGroup(this);
-    buttonGroup->setExclusive(false);
-    connect(buttonGroup, QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked),
-            this, &MainWindow::buttonGroupClicked);
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(createCellWidget(tr("Conditional"), DiagramItem::Conditional), 0, 0);
-    layout->addWidget(createCellWidget(tr("Process"), DiagramItem::Step),0, 1);
-    layout->addWidget(createCellWidget(tr("Input/Output"), DiagramItem::Io), 1, 0);
-//! [21]
-
-    QToolButton *textButton = new QToolButton;
-    textButton->setCheckable(true);
-    buttonGroup->addButton(textButton, InsertTextButton);
-    textButton->setIcon(QIcon(QPixmap(":/images/textpointer.png")));
-    textButton->setIconSize(QSize(50, 50));
-    QGridLayout *textLayout = new QGridLayout;
-    textLayout->addWidget(textButton, 0, 0, Qt::AlignHCenter);
-    textLayout->addWidget(new QLabel(tr("Text")), 1, 0, Qt::AlignCenter);
-    QWidget *textWidget = new QWidget;
-    textWidget->setLayout(textLayout);
-    layout->addWidget(textWidget, 1, 1);
-
-    layout->setRowStretch(3, 10);
-    layout->setColumnStretch(2, 10);
-
-    QWidget *itemWidget = new QWidget;
-    itemWidget->setLayout(layout);
-
-    backgroundButtonGroup = new QButtonGroup(this);
-    connect(backgroundButtonGroup, QOverload<QAbstractButton *>::of(&QButtonGroup::buttonClicked),
-            this, &MainWindow::backgroundButtonGroupClicked);
-
-    QGridLayout *backgroundLayout = new QGridLayout;
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("Blue Grid"),
-                                                           ":/images/background1.png"), 0, 0);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("White Grid"),
-                                                           ":/images/background2.png"), 0, 1);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("Gray Grid"),
-                                                           ":/images/background3.png"), 1, 0);
-    backgroundLayout->addWidget(createBackgroundCellWidget(tr("No Grid"),
-                                                           ":/images/background4.png"), 1, 1);
-
-    backgroundLayout->setRowStretch(2, 10);
-    backgroundLayout->setColumnStretch(2, 10);
-
-    QWidget *backgroundWidget = new QWidget;
-    backgroundWidget->setLayout(backgroundLayout);
-
-    // My stuff
-    QVBoxLayout *runOptionLayout = new QVBoxLayout;
-    runOptionLayout->setAlignment(Qt::AlignTop);
-
-    QLabel *algorithmLabel = new QLabel(tr("Algorithm:"));
-    runOptionLayout->addWidget(algorithmLabel);
-    QComboBox *algorithmBox = new QComboBox;
-    algorithmBox->addItem("Local Search");
-    algorithmBox->addItem("Greedy");
-    runOptionLayout->addWidget(algorithmBox);
-    QLabel *variationLabel = new QLabel(tr("Variation:"));
-    runOptionLayout->addWidget(variationLabel);
-    QComboBox *variationBox = new QComboBox;
-    variationBox->addItem("Geometrie");
-    variationBox->addItem("Permutation");
-    runOptionLayout->addWidget(variationBox);
-    QWidget *runOptionWidget = new QWidget;
-    runOptionWidget->setLayout(runOptionLayout);
-
-
-//! [22]
-    //toolBox = new QToolBox;
-    toolBox->setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Ignored));
-    toolBox->setMinimumWidth(itemWidget->sizeHint().width());
-    toolBox->addItem(itemWidget, tr("Basic Flowchart Shapes"));
-    toolBox->addItem(backgroundWidget, tr("Backgrounds"));
-    toolBox->addItem(runOptionWidget, tr("Algorithms"));
-}
-//! [22]
+//! <a target="_blank" href="https://icons8.com/icon/86209/reset">Reset</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
 
 //! [23]
 void MainWindow::createActions()
@@ -502,14 +422,6 @@ void MainWindow::createMenus()
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(exitAction);
 
-    itemMenu = menuBar()->addMenu(tr("&Item"));
-    itemMenu->addAction(deleteAction);
-    itemMenu->addSeparator();
-    itemMenu->addAction(toFrontAction);
-    itemMenu->addAction(sendBackAction);
-    itemMenu->addSeparator();
-    itemMenu->addAction(runAlgorithmAction);
-
     aboutMenu = menuBar()->addMenu(tr("&Help"));
     aboutMenu->addAction(aboutAction);
 }
@@ -519,29 +431,41 @@ void MainWindow::createMenus()
 void MainWindow::createToolbars()
 {
     createInstanceButton = new QToolButton;
-    createInstanceButton->setIcon(QIcon(":/images/nextIcon.png"));
+    createInstanceButton->setIcon(QIcon(":/images/newInstIcon.png"));
+    createInstanceButton->setToolTip(tr("Create a new Instance."));
     connect(createInstanceButton, &QToolButton::clicked,
-            instance_dialog, &Instance_creator_dialog::show);
+            this, &MainWindow::newInstance);
+
+    resetButton = new QToolButton;
+    resetButton->setIcon(QIcon(":/images/resetIcon.png"));
+    resetButton->setToolTip(tr("Reset current Instance."));
+    connect(resetButton, &QToolButton::clicked,
+            this, &MainWindow::resetInstance);
 
     runTestButton = new QToolButton;
-    runTestButton->setIcon(QIcon(":/images/nextIcon.png"));
+    runTestButton->setIcon(QIcon(":/images/testIcon.png"));
+    runTestButton->setToolTip(tr("Open Dialog for running tests."));
     connect(runTestButton, &QToolButton::clicked,
             tester, &Tester::show);
 
     instanceToolbar = addToolBar(tr("Instance"));
     instanceToolbar->addWidget(createInstanceButton);
+    instanceToolbar->addWidget(resetButton);
     instanceToolbar->addWidget(runTestButton);
 
     runAlgorithmButton = new QToolButton;
     runAlgorithmButton->setIcon(QIcon(":/images/startIcon2.png"));
+    runAlgorithmButton->setToolTip(tr("Start selected algorithm on current instance."));
     connect(runAlgorithmButton, &QToolButton::clicked,
             this, &MainWindow::runAlgorithm);
 
     stopAlgorithmButton = new QToolButton;
     stopAlgorithmButton->setIcon(QIcon(":/images/stopIcon.png"));
+    stopAlgorithmButton->setToolTip(tr("Stop executing current algorithm."));
 
     advanceButton = new QToolButton;
     advanceButton->setIcon(QIcon(":/images/nextIcon.png"));
+    advanceButton->setToolTip(tr("Advance one step."));
 
     algorunnerToolbar = addToolBar(tr("Exec"));
     algorunnerToolbar->addWidget(runAlgorithmButton);
@@ -550,13 +474,13 @@ void MainWindow::createToolbars()
 
     sceneScaleCombo = new QComboBox;
     QStringList scales;
-    scales << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
+    scales << tr("10%") << tr("25%") << tr("50%") << tr("75%") << tr("100%") << tr("125%") << tr("150%");
     sceneScaleCombo->addItems(scales);
-    sceneScaleCombo->setCurrentIndex(2);
+    sceneScaleCombo->setCurrentIndex(4);
     connect(sceneScaleCombo, &QComboBox::currentTextChanged,
             this, &MainWindow::sceneScaleChanged);
 
-    pointerToolbar = addToolBar(tr("Pointer type"));
+    pointerToolbar = addToolBar(tr("Zoom"));
     pointerToolbar->addWidget(sceneScaleCombo);
 //! [27]
 }
@@ -677,4 +601,16 @@ void MainWindow::ensureVisible(const QRectF &rect)
 void MainWindow::runTester()
 {
     tester->show();
+}
+
+void MainWindow::newInstance()
+{
+    statusBar()->clearMessage();
+    instance_dialog->show();
+}
+
+void MainWindow::resetInstance()
+{
+    statusBar()->clearMessage();
+    scene->resetRectangles();
 }

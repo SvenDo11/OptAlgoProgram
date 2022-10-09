@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QtConcurrent/QtConcurrentRun>
 #include <QWaitCondition>
-#include <QTime>
+#include <QElapsedTimer>
 
 class Algorithmrunner : public QObject
 {
@@ -43,7 +43,7 @@ private:
     bool stopRequest = false;
 
     animation animationType = timeBased;
-    QTime lastUpdated = QTime(0,0);
+    QElapsedTimer timer;
     int currentItteration = 0;
     int updateInterval;
 

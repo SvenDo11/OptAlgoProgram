@@ -24,7 +24,7 @@ QList<int> GreedyBestFit::sort(RectangleInstance* instance)
         int id, area;
         bool operator<(struct area other)
         {
-            return area < other.area;
+            return area > other.area;
         }
     } area;
 
@@ -59,6 +59,7 @@ bool GreedyBestFit::accept(RectSolution sol)
 
 RectSolution GreedyBestFit::alter(RectSolution sol, QList<int> list, int itt)
 {
+    std::cout << itt << std::endl;
     int id = list[itt];
     int w = I->value(id)->width;
     int h = I->value(id)->heigth;
@@ -67,12 +68,14 @@ RectSolution GreedyBestFit::alter(RectSolution sol, QList<int> list, int itt)
     int baseArea = pow(I->getBoxlength(), 2) - (w * h);
 
     rectType rec(x, y, 0, w, h);
+    rectType recRot(x, y, 0, h, w);
     QList<int> costs = {};
     // Determine remaining area for each box
     for(int b = 0; b <= freeBox; ++b)
     {
         rec.box = b;
-        if(sol.isValid(rec))
+        recRot.box = b;
+        if(sol.isValid(rec) || sol.isValid(recRot))
         {
             int cost = baseArea;
             for(int id: sol.boxes[b])
@@ -95,6 +98,11 @@ RectSolution GreedyBestFit::alter(RectSolution sol, QList<int> list, int itt)
             box = b;
     }
     rec.box = box;
+    if(!sol.isValid(rec))
+    {
+        recRot.box = box;
+        rec = recRot;
+    }
 
     if(box == freeBox)
         freeBox++;
@@ -117,6 +125,16 @@ RectSolution GreedyBestFit::alter(RectSolution sol, QList<int> list, int itt)
         if(!sol.isValid(rec))
         {
             rec.x = oldX;
+            break;
+        }
+    }
+    for(int newY = rec.y; newY >=0; newY--)
+    {
+        int oldY = rec.y;
+        rec.y = newY;
+        if(!sol.isValid(rec))
+        {
+            rec.y = oldY;
             break;
         }
     }

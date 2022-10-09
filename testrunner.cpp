@@ -63,8 +63,9 @@ int TestRunner::runAlgorithm(RectangleInstance *I, algorithm algo, int stopTime,
 {
     QElapsedTimer timer;
     RectSolution sol;
+    int itter = 0;
     std::function<bool()> stopFnct = [&timer, &stopTime](){if(stopTime <= 0) return false; else return timer.elapsed() >= stopTime;};
-    std::function<void(RectSolution)> drawFnct = [](RectSolution){};
+    std::function<void(RectSolution)> drawFnct = [&itter](RectSolution){itter++;};
     switch(algo)
     {
         case(algorithm::localSearchGeometrie):
@@ -94,7 +95,7 @@ int TestRunner::runAlgorithm(RectangleInstance *I, algorithm algo, int stopTime,
         }
         case(algorithm::greedyLargestFirst):
         {
-            GreedyLargestFirst searcher = GreedyLargestFirst();
+            GreedyLargestFirst searcher = GreedyLargestFirst(drawFnct);
             timer.start();
             sol = searcher.runGreedyAlgorithm(I);
             *runTime = timer.elapsed();
@@ -102,7 +103,7 @@ int TestRunner::runAlgorithm(RectangleInstance *I, algorithm algo, int stopTime,
         }
         case(algorithm::greedyBestFit):
         {
-            GreedyBestFit searcher = GreedyBestFit();
+            GreedyBestFit searcher = GreedyBestFit(drawFnct);
             timer.start();
             sol = searcher.runGreedyAlgorithm(I);
             *runTime = timer.elapsed();
@@ -111,7 +112,7 @@ int TestRunner::runAlgorithm(RectangleInstance *I, algorithm algo, int stopTime,
     }
     *valid = sol.isValid();
     int cost = sol.usedBoxes();
-    emit print(strName(algo) + " is done!\n");
+    emit print(strName(algo) + " is done after " + std::to_string(itter) +  " itterations!\n");
     return cost;
 }
 

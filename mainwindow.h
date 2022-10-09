@@ -109,9 +109,10 @@ private slots:
     void runTester();
     void showMessage(const QString &message, int timeout = 0);
     void ensureVisible(const QRectF &rect);
+    void newInstance();
+    void resetInstance();
 
 private:
-    void createToolBox();
     void createActions();
     void createMenus();
     void createToolbars();
@@ -168,6 +169,7 @@ private:
     QToolButton *createInstanceButton;
     QToolButton *advanceButton;
     QToolButton *runTestButton;
+    QToolButton *resetButton;
 
     QAction *boldAction;
     QAction *underlineAction;

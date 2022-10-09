@@ -12,7 +12,6 @@ HEADERS	    =   mainwindow.h \
 		greedybestfit.h \
 		greedylargestfirst.h \
 		instance_creator_dialog.h \
-		local_search.h \
 		localsearch.h \
 		lsgeometrie.h \
 		lsoverlap.h \

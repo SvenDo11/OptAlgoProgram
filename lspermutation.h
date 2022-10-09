@@ -43,6 +43,7 @@ protected:
 
     RectSolution* genSolution(Permutation perm, RectSolution *sol, int rotateID = -1);
     bool nextIsLast();
+    void nextOp();
 
 private:
     RectangleInstance *I;

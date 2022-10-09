@@ -60,8 +60,8 @@
 #include <QGraphicsRectItem>
 #include <QColor>
 
-#define SCALE 20
-#define ALPHA 200
+#define ALPHA 120
+#define HIGHALPHA 200
 
 QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
@@ -98,6 +98,7 @@ public slots:
 
     void initRectangles(RectangleInstance *instance);
     void updateRectangles(RectSolution sol);
+    void resetRectangles();
 
     void cleanUp();
 
@@ -118,6 +119,7 @@ private:
     bool isItemChange(int type) const;
 
     int LINES = 5;
+    int SCALE = 10;
 
     DiagramItem::DiagramType myItemType;
     QMenu *myItemMenu;
@@ -132,12 +134,20 @@ private:
     QColor myLineColor;
 
     QPen boxPen;
+    QPen boxHighlightPen;
+    QPen rectPen;
+    QPen rectHighlightPen;
 
     QList<QGraphicsRectItem*> rectangles;
     QList<QGraphicsRectItem*> boxes;
 
-    QList<QColor> colors = {QColor(102, 255, 255, ALPHA), QColor(255, 153, 153, ALPHA), QColor(255,255, 103, ALPHA),
-                           QColor(204, 153, 255, ALPHA), QColor(153, 255, 153, ALPHA)};
+    //QList<QColor> colors = {QColor(102, 255, 255, ALPHA), QColor(255, 153, 153, ALPHA), QColor(255,255, 103, ALPHA),
+    //                       QColor(204, 153, 255, ALPHA), QColor(153, 255, 153, ALPHA)};
+    QList<QColor> colors = {QColor(145, 176, 255, ALPHA), QColor(142, 255, 237, ALPHA),
+                           QColor(227, 255, 157, ALPHA), QColor(207, 152, 255, ALPHA)};
+    QList<QColor> highlightColors = {QColor(51, 109, 255, HIGHALPHA), QColor(51, 255, 223, HIGHALPHA),
+                           QColor(192, 253, 38, HIGHALPHA), QColor(167, 65, 255, HIGHALPHA)};
+    QColor highlightColor = QColor(229, 142, 35);
 };
 //! [0]
 

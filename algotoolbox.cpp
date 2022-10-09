@@ -52,7 +52,7 @@ AlgoToolBox::AlgoToolBox()
 
     intervalBox = new QSpinBox;
     intervalBox->setRange(0, 1000000);
-    intervalBox->setValue(20);
+    intervalBox->setValue(2);
 
     animationLayout->addWidget(animationLabel);
     animationLayout->addWidget(timeBtn);

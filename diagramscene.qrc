@@ -19,5 +19,8 @@
         <file>images/startIcon.png</file>
         <file>images/startIcon2.png</file>
         <file>images/stopIcon.png</file>
+        <file>images/newInstIcon.png</file>
+        <file>images/testIcon.png</file>
+        <file>images/resetIcon.png</file>
     </qresource>
 </RCC>

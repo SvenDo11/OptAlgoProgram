@@ -22,7 +22,7 @@ QList<int> GreedyLargestFirst::sort(RectangleInstance* instance)
         int id, area;
         bool operator<(struct area other)
         {
-            return area < other.area;
+            return area > other.area;
         }
     } area;
 
@@ -65,42 +65,59 @@ bool GreedyLargestFirst::accept(RectSolution sol)
 RectSolution GreedyLargestFirst::alter(RectSolution sol, QList<int> list, int itt)
 {
     int id = list[itt];
-    int y = 0;
     int w = I->value(id)->width;
     int h = I->value(id)->heigth;
     int x = I->getBoxlength()-w;
+    int y = I->getBoxlength()-h;
 
     rectType rec(x, y, 0, w, h);
-    bool foundY = false;
-    // find right y height, for right box.
+    // find right box.
     for(int b = 0; b < sol.boxes.length(); ++b)
     {
-       rec.box = b;
-       for(int j = 0; j < sol.boxLength - h; j++)
-       {
-           rec.y = j;
-           if(sol.isValid(rec))
-           {
-               foundY = true;
-               break;
-           }
-       }
-       if(foundY)
-           break;
-   }
-
-   // Push as far to the left as posible
-   for(int newX = x; newX >= 0; newX--)
-   {
-       int oldX = rec.x;
-       rec.x = newX;
+        rec.box = b;
+        if(sol.isValid(rec))
+            break;
+        // Check rotated rectangle
+        int oldW = rec.w;
+        rec.w = rec.h;
+        rec.h = oldW;
+        if(sol.isValid(rec))
+            break;
+    }
+    // Push down
+    for(int newY = y; newY >= 0; newY--)
+    {
+        int oldY = rec.y;
+        rec.y = newY;
+        if(!sol.isValid(rec))
+        {
+            rec.y = oldY;
+            break;
+        }
+    }
+    // Push as far to the left as posible
+    for(int newX = x; newX >= 0; newX--)
+    {
+        int oldX = rec.x;
+        rec.x = newX;
         if(!sol.isValid(rec))
         {
             rec.x = oldX;
             break;
         }
-   }
-   sol.addRect(id, rec);
+    }
+    // Push down
+    for(int newY = rec.y; newY >= 0; newY--)
+    {
+        int oldY = rec.y;
+        rec.y = newY;
+        if(!sol.isValid(rec))
+        {
+            rec.y = oldY;
+            break;
+        }
+    }
+    sol.addRect(id, rec);
 
-   return sol;
+    return sol;
 }

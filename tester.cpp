@@ -1,7 +1,5 @@
 #include "tester.h"
 
-#include "rectangleinstance.h"
-
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QLabel>
@@ -72,10 +70,12 @@ Tester::Tester(QWidget *parent): QDialog(parent)
     }
 
     scrollArea = new QScrollArea;
+    scrollArea->setAlignment(Qt::AlignTop);
     logBox = new QTextBrowser;
     scrollArea->setWidget(logBox);
     logBox->setMinimumWidth(500);
     logBox->setMinimumHeight(100);
+    logBox->setFont(getMonospaceFont());
     scrollArea->adjustSize();
     scrollArea->setWidgetResizable(true);
     lyt_main->addWidget(scrollArea);
@@ -120,4 +120,21 @@ void Tester::print(const std::string &msg)
 {
     outputStr << msg;
     logBox->setText(outputStr.str().c_str());
+}
+
+bool isFixedPitch(const QFont &font) {
+   const QFontInfo fi(font);
+   return fi.fixedPitch();
+}
+
+QFont Tester::getMonospaceFont() {
+   QFont font("monospace");
+   if (isFixedPitch(font)) return font;
+   font.setStyleHint(QFont::Monospace);
+   if (isFixedPitch(font)) return font;
+   font.setStyleHint(QFont::TypeWriter);
+   if (isFixedPitch(font)) return font;
+   font.setFamily("courier");
+   if (isFixedPitch(font)) return font;
+   return font;
 }

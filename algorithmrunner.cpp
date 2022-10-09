@@ -11,7 +11,7 @@
 Algorithmrunner::Algorithmrunner(QObject *parent)
     : QObject{parent}, currentAlgorithm(Algorithmrunner::algorithm::localSearchGeometrie),
       animationType(Algorithmrunner::animation::timeBased),
-      updateInterval(20)
+      updateInterval(2)
 {
 
 }
@@ -39,48 +39,51 @@ void Algorithmrunner::execute(RectangleInstance *instance)
     RectSolution sol;
     auto drawFunc = [this](RectSolution s){drawSRequested(s);};
     auto stopFunc = [this](){return stopRequest;};
+    currentItteration = 0;
+    timer.start();
     switch(currentAlgorithm)
     {
-        case Algorithmrunner::algorithm::localSearchGeometrie:
-        {
-            LSGeometrie searcher(drawFunc, stopFunc);
-            sol = searcher.runLocalSearch(instance);
-            algorithmName = "Local Search Geometrie";
-            break;
-        }
-        case Algorithmrunner::algorithm::localSearchPermutation:
-        {
-            LSPermutation searcher(drawFunc, stopFunc);
-            Permutation perm = searcher.runLocalSearch(instance);
-            sol = RectSolution(*(perm.sol));
-            algorithmName = "Local Search Permutation";
-            break;
-        }
-        case Algorithmrunner::algorithm::localSearchGeometrieOverlap:
-        {
-            LSOverlap searcher(drawFunc, stopFunc);
-            sol = searcher.runLocalSearch(instance);
-            algorithmName = "Local Search Geometrie Overlap";
-            break;
-        }
-        case Algorithmrunner::algorithm::greedyLargestFirst:
-        {
-            GreedyLargestFirst searcher(drawFunc);
-            sol = searcher.runGreedyAlgorithm(instance);
-            algorithmName = "Greedy Largest First";
-            break;
-        }
-        case Algorithmrunner::algorithm::greedyBestFit:
-        {
-            GreedyBestFit searcher(drawFunc);
-            sol = searcher.runGreedyAlgorithm(instance);
-            algorithmName = "Greedy Best Fit";
-            break;
-        }
-        default:
-            break;
+    case Algorithmrunner::algorithm::localSearchGeometrie:
+    {
+        LSGeometrie searcher(drawFunc, stopFunc);
+        sol = searcher.runLocalSearch(instance);
+        algorithmName = "Local Search Geometrie";
+        break;
     }
-    emit message("Finished " + algorithmName, 5000);
+    case Algorithmrunner::algorithm::localSearchPermutation:
+    {
+        LSPermutation searcher(drawFunc, stopFunc);
+        Permutation perm = searcher.runLocalSearch(instance);
+        sol = RectSolution(*(perm.sol));
+        algorithmName = "Local Search Permutation";
+        break;
+    }
+    case Algorithmrunner::algorithm::localSearchGeometrieOverlap:
+    {
+        LSOverlap searcher(drawFunc, stopFunc);
+        sol = searcher.runLocalSearch(instance);
+        algorithmName = "Local Search Geometrie Overlap";
+        break;
+    }
+    case Algorithmrunner::algorithm::greedyLargestFirst:
+    {
+        GreedyLargestFirst searcher(drawFunc);
+        sol = searcher.runGreedyAlgorithm(instance);
+        algorithmName = "Greedy Largest First";
+        break;
+    }
+    case Algorithmrunner::algorithm::greedyBestFit:
+    {
+        GreedyBestFit searcher(drawFunc);
+        sol = searcher.runGreedyAlgorithm(instance);
+        algorithmName = "Greedy Best Fit";
+        break;
+    }
+    default:
+        break;
+    }
+    int cost = sol.usedBoxes();
+    emit message("Finished " + algorithmName + " with cost: " + std::to_string(cost).c_str() + " boxes!");
     if(animationType != Algorithmrunner::animation::none)
         emit updateRectangles(sol);
     stopRequest = false;
@@ -89,14 +92,21 @@ void Algorithmrunner::execute(RectangleInstance *instance)
 
 void Algorithmrunner::drawSRequested(RectSolution S)
 {
+    if(currentItteration == 0 && animationType == Algorithmrunner::animation::timeBased)
+    {
+        currentItteration++;
+        emit updateRectangles(S);
+        return;
+    }
     currentItteration++;
+
     switch(animationType)
     {
     case Algorithmrunner::animation::timeBased:
-        if(QTime::currentTime() >= lastUpdated.addSecs(updateInterval))
+        if(timer.elapsed() >= 1000 * updateInterval)
         {
             emit updateRectangles(S);
-            lastUpdated = QTime::currentTime();
+            timer.restart();
         }
         break;
     case Algorithmrunner::animation::iterationBased:
@@ -123,7 +133,8 @@ void Algorithmrunner::requestStop()
 
 void Algorithmrunner::advance()
 {
-    condVar.wakeOne();
+    if(isRunning)
+        condVar.wakeOne();
 }
 
 void Algorithmrunner::setAnimation(Algorithmrunner::animation newAnimation)
